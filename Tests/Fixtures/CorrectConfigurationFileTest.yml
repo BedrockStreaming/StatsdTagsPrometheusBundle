@@ -1,0 +1,304 @@
+m6web_statsd_prometheus:
+
+    servers:
+        default:
+            address: 'udp://%statsd.address%'
+            port: '%statsd.port%'
+        local:
+            address: 'udp://127.0.0.1'
+            port: 9125
+
+    tags:
+        project: 'service_6play_users'
+
+    # Clients definition
+    clients:
+
+        # Default client
+        default:
+            server: 'local'
+            groups:
+
+                # Default group
+                default:
+                    events:
+
+                        uniqu_anonymous_id:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'uniqanonymousid'
+                                    tags:
+                                        - 'platform'
+
+                        m6kernel.terminate:
+                            metrics:
+                                -   type: 'timer'
+                                    name: 'request'
+                                    param_value: 'getTiming'
+                                    tags:
+                                        - 'statusCode'
+                                        - 'routeName'
+
+                                -   type: 'timer'
+                                    name: 'memory'
+                                    param_value: 'getMemory'
+                                    tags:
+                                        - 'statusCode'
+                                        - 'routeName'
+
+                        m6web.console.command:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command.run'
+                                    tags:
+                                        - 'underscoredCommandName'
+
+                        m6web.console.exception:
+                            flush_metrics_queue: true
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command.exception'
+                                    tags:
+                                        - 'underscoredCommandName'
+
+                        m6web.console.terminate:
+                            flush_metrics_queue: true
+                            metrics:
+                                -   type: 'timer'
+                                    name: 'command.exception'
+                                    param_value: 'executionTimeHumanReadable'
+                                    tags:
+                                        - 'underscoredCommandName'
+
+                        m6kernel.exception:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'errors'
+                                    tags:
+                                        - 'statusCode'
+
+                        m6video.user_box.pairing:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'user_box'
+                                    tags:
+                                        - 'platformCode'
+                                        - 'status'
+
+                        m6video.auto_pairing:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'auto_pairing'
+                                    tags:
+                                        - 'network'
+                                        - 'status'
+
+                        m6video.redis.list.size:
+                            metrics:
+                                -   type: 'timer'
+                                    name: 'command.redis.list.size'
+                                    param_value: 'getTiming'
+                                    tags:
+                                        - 'customer'
+                                        - 'command'
+
+                        m6video.command.clean_deleted_tests:
+                            flush_metrics_queue: true
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command.clean_deleted_tests'
+                                    tags:
+                                        - 'value'
+
+                        m6video.command.export_user_data.send.error:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command.export_user_data.send.error'
+                                    tags:
+                                        - 'customer'
+
+                        m6video.command.client.error:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command.send.error'
+                                    tags:
+                                        - 'customer'
+                                        - 'command'
+                                        - 'value'
+
+                        m6video.command.redis.error:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command.redis.error'
+                                    tags:
+                                        - 'customer'
+                                        - 'command'
+
+                        m6video.command.import_user_data.client.error:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command.import_user_data.error'
+                                    tags:
+                                        - 'value'
+
+                        m6video.command:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'command'
+                                    tags:
+                                        - 'customer'
+                                        - 'command'
+                                        - 'value'
+
+                        m6video.krux.segments.error:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'krux.segments.error'
+                                    tags:
+                                        - 'platformCode'
+                                        - 'value'
+
+                        m6video.sms.send:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'sms'
+                                    tags:
+                                        - 'provider'
+                                        - 'type'
+                                        - 'success'
+                                        - 'code'
+
+                        m6video.krux.call:
+                            metrics:
+                                # increment: krux.call.<route>.<platformCode>.<value>
+                                -   type: 'timer'
+                                    name: 'krux.call'
+                                    param_value: 'geTiming'
+                                    tags:
+                                        - 'route'
+                                        - 'platformCode'
+                                        - 'value'
+
+                        m6video.gigya.notifications:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'gigya.notifications'
+                                    tags:
+                                        - 'value'
+
+                        m6video.store.request:
+                            metrics:
+                                -   type: 'timer'
+                                    name: 'store.validation'
+                                    param_value: 'getTiming'
+                                    tags:
+                                        - 'platformCode'
+                                        - 'storeCode'
+                                        - 'statusCode'
+
+                        m6video.store.validation.error:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'store.validation.error'
+                                    tags:
+                                        - 'platformCode'
+                                        - 'storeCode'
+                                        - 'value'
+
+                        m6video.store.validation.success:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'store.validation.success'
+                                    tags:
+                                        - 'platformCode'
+                                        - 'storeCode'
+
+                        m6video.store.freemium_pack.active:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'store.freemium_pack'
+                                    tags:
+                                        - 'platformCode'
+                                        - 'storeCode'
+                                        - 'active'
+
+                        m6video.import.status:
+                            flush_metrics_queue: true
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'import'
+                                    tags:
+                                        - 'keyspace'
+                                        - 'table'
+                                        - 'status'
+
+                        applaunch.client.error:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'applaunch.server.error'
+
+                        applaunch.client.success:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'applaunch.server.success'
+
+                        m6video.mindbaz.export:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'mindbaz.export'
+                                    tags:
+                                        - 'type'
+                                        - 'value'
+
+                        m6video.client.release:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'client.release'
+                                    tags:
+                                        - 'platformCode'
+                                        - 'release'
+
+                        m6video.user.delete:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'user.delete'
+                                    tags:
+                                        - 'value'
+
+                        m6web.cassandra:
+                            metrics:
+                                -   type: 'timer'
+                                    name: 'cassandra.all_keyspaces'
+                                    param_value: 'getTiming'
+                                    tags:
+                                        - 'command'
+
+                        redis.command:
+                            metrics:
+                                # increment: cache.redis.composant.<command>.service-6play-users
+                                -   type: 'timer'
+                                    name: 'cache.redis.composant'
+                                    param_value: 'getTiming'
+                                    tags:
+                                        - 'command'
+
+                        daemon.loop.iteration:
+                            metrics:
+                                # increment: worker.service-6play-users.<command>.iteration
+                                -   type: 'timer'
+                                    name: 'worker.iteration'
+                                    param_value: 'getTiming'
+                                    tags:
+                                        - 'command'
+
+                                -   type: 'timer'
+                                    name: 'memory.worker.iteration'
+                                    param_value: 'getMemory'
+                                    tags:
+                                        - 'command'
+
+                        daemon.stop:
+                            flush_metrics_queue: true
+
+                        daemon.iteration.statsd.immediatesend:
+                            flush_metrics_queue: true

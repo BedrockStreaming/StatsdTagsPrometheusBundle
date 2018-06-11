@@ -1,0 +1,11 @@
+app/bootstrap.php.cache
+app/cache/*
+app/logs/*
+build/
+vendor/
+bin/
+composer.lock
+.php_cs.cache
+
+.phpunit
+phpunit.xml

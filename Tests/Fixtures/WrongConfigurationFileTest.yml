@@ -1,0 +1,27 @@
+m6web_statsd_prometheus:
+    servers:
+        default:
+            address: 'udp://%statsd_tags.address%'
+            port: '%statsd_tags.port%'
+    tags:
+        tagA: 'tagValue1'
+        tagB: 'tagValue2'
+
+    clients:
+        default:
+            servers: ['all']
+            grousp:
+                groupA:
+                    eventss: #events types
+                        m6kernel.terminate1:
+                            theMetrics:
+                                -
+                                    type: 'increment'
+                                    wrongName: 'status.code.<code>'
+                                    tags: #tags only for current event
+                                        - 'tag1Event2'
+                                        - 'tag2'
+                                -
+                                    type: 'timser'
+                                    metric: 'status.code.timing'
+                                    custom_param: 'customTiming'
