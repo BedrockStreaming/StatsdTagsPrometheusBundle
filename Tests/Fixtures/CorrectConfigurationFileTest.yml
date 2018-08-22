@@ -15,8 +15,9 @@ m6web_statsd_prometheus:
     clients:
 
         # Default client
-        default:
+        default_client:
             server: 'local'
+            max_queued_metrics: 12
             groups:
 
                 # Default group
@@ -36,22 +37,22 @@ m6web_statsd_prometheus:
                                     name: 'request'
                                     param_value: 'getTiming'
                                     tags:
-                                        - 'statusCode'
-                                        - 'routeName'
+                                        status: 'statusCode'
+                                        route: 'routeName'
 
                                 -   type: 'timer'
                                     name: 'memory'
                                     param_value: 'getMemory'
                                     tags:
-                                        - 'statusCode'
-                                        - 'routeName'
+                                        status: 'statusCode'
+                                        route: 'routeName'
 
                         m6web.console.command:
                             metrics:
                                 -   type: 'increment'
                                     name: 'command.run'
                                     tags:
-                                        - 'underscoredCommandName'
+                                        command: 'underscoredCommandName'
 
                         m6web.console.exception:
                             flush_metrics_queue: true
@@ -59,7 +60,7 @@ m6web_statsd_prometheus:
                                 -   type: 'increment'
                                     name: 'command.exception'
                                     tags:
-                                        - 'underscoredCommandName'
+                                        command: 'underscoredCommandName'
 
                         m6web.console.terminate:
                             flush_metrics_queue: true
@@ -68,30 +69,30 @@ m6web_statsd_prometheus:
                                     name: 'command.exception'
                                     param_value: 'executionTimeHumanReadable'
                                     tags:
-                                        - 'underscoredCommandName'
+                                        command: 'underscoredCommandName'
 
                         m6kernel.exception:
                             metrics:
                                 -   type: 'increment'
                                     name: 'errors'
                                     tags:
-                                        - 'statusCode'
+                                        status: 'statusCode'
 
                         m6video.user_box.pairing:
                             metrics:
                                 -   type: 'increment'
                                     name: 'user_box'
                                     tags:
-                                        - 'platformCode'
-                                        - 'status'
+                                        platform: 'platformCode'
+                                        status: ~
 
                         m6video.auto_pairing:
                             metrics:
                                 -   type: 'increment'
                                     name: 'auto_pairing'
                                     tags:
-                                        - 'network'
-                                        - 'status'
+                                        network: ~
+                                        status: ~
 
                         m6video.redis.list.size:
                             metrics:
@@ -99,8 +100,8 @@ m6web_statsd_prometheus:
                                     name: 'command.redis.list.size'
                                     param_value: 'getTiming'
                                     tags:
-                                        - 'customer'
-                                        - 'command'
+                                        customer: ~
+                                        command: ~
 
                         m6video.command.clean_deleted_tests:
                             flush_metrics_queue: true
@@ -108,65 +109,65 @@ m6web_statsd_prometheus:
                                 -   type: 'increment'
                                     name: 'command.clean_deleted_tests'
                                     tags:
-                                        - 'value'
+                                        value: ~
 
                         m6video.command.export_user_data.send.error:
                             metrics:
                                 -   type: 'increment'
                                     name: 'command.export_user_data.send.error'
                                     tags:
-                                        - 'customer'
+                                        customer: ~
 
                         m6video.command.client.error:
                             metrics:
                                 -   type: 'increment'
                                     name: 'command.send.error'
                                     tags:
-                                        - 'customer'
-                                        - 'command'
-                                        - 'value'
+                                        customer: ~
+                                        command: ~
+                                        value: ~
 
                         m6video.command.redis.error:
                             metrics:
                                 -   type: 'increment'
                                     name: 'command.redis.error'
                                     tags:
-                                        - 'customer'
-                                        - 'command'
+                                        customer: ~
+                                        command: ~
 
                         m6video.command.import_user_data.client.error:
                             metrics:
                                 -   type: 'increment'
                                     name: 'command.import_user_data.error'
                                     tags:
-                                        - 'value'
+                                        value: ~
 
                         m6video.command:
                             metrics:
                                 -   type: 'increment'
                                     name: 'command'
                                     tags:
-                                        - 'customer'
-                                        - 'command'
-                                        - 'value'
+                                        customer: ~
+                                        command: ~
+                                        value: ~
 
                         m6video.krux.segments.error:
                             metrics:
                                 -   type: 'increment'
                                     name: 'krux.segments.error'
                                     tags:
-                                        - 'platformCode'
-                                        - 'value'
+                                        platformCode: ~
+                                        value: ~
 
                         m6video.sms.send:
                             metrics:
                                 -   type: 'increment'
                                     name: 'sms'
                                     tags:
-                                        - 'provider'
-                                        - 'type'
-                                        - 'success'
-                                        - 'code'
+                                        provider: ~
+                                        type: ~
+                                        success: ~
+                                        code: ~
 
                         m6video.krux.call:
                             metrics:
@@ -175,16 +176,16 @@ m6web_statsd_prometheus:
                                     name: 'krux.call'
                                     param_value: 'geTiming'
                                     tags:
-                                        - 'route'
-                                        - 'platformCode'
-                                        - 'value'
+                                        route: ~
+                                        platformCode: ~
+                                        value: ~
 
                         m6video.gigya.notifications:
                             metrics:
                                 -   type: 'increment'
                                     name: 'gigya.notifications'
                                     tags:
-                                        - 'value'
+                                        value: ~
 
                         m6video.store.request:
                             metrics:
@@ -192,35 +193,35 @@ m6web_statsd_prometheus:
                                     name: 'store.validation'
                                     param_value: 'getTiming'
                                     tags:
-                                        - 'platformCode'
-                                        - 'storeCode'
-                                        - 'statusCode'
+                                        platformCode: ~
+                                        storeCode: ~
+                                        statusCode: ~
 
                         m6video.store.validation.error:
                             metrics:
                                 -   type: 'increment'
                                     name: 'store.validation.error'
                                     tags:
-                                        - 'platformCode'
-                                        - 'storeCode'
-                                        - 'value'
+                                        platformCode: ~
+                                        storeCode: ~
+                                        value: ~
 
                         m6video.store.validation.success:
                             metrics:
                                 -   type: 'increment'
                                     name: 'store.validation.success'
                                     tags:
-                                        - 'platformCode'
-                                        - 'storeCode'
+                                        platformCode: ~
+                                        storeCode: ~
 
                         m6video.store.freemium_pack.active:
                             metrics:
                                 -   type: 'increment'
                                     name: 'store.freemium_pack'
                                     tags:
-                                        - 'platformCode'
-                                        - 'storeCode'
-                                        - 'active'
+                                        platformCode: ~
+                                        storeCode: ~
+                                        active: ~
 
                         m6video.import.status:
                             flush_metrics_queue: true
@@ -228,9 +229,9 @@ m6web_statsd_prometheus:
                                 -   type: 'increment'
                                     name: 'import'
                                     tags:
-                                        - 'keyspace'
-                                        - 'table'
-                                        - 'status'
+                                        keyspace: ~
+                                        table: ~
+                                        status: ~
 
                         applaunch.client.error:
                             metrics:
@@ -247,23 +248,23 @@ m6web_statsd_prometheus:
                                 -   type: 'increment'
                                     name: 'mindbaz.export'
                                     tags:
-                                        - 'type'
-                                        - 'value'
+                                        type: ~
+                                        value: ~
 
                         m6video.client.release:
                             metrics:
                                 -   type: 'increment'
                                     name: 'client.release'
                                     tags:
-                                        - 'platformCode'
-                                        - 'release'
+                                        platformCode: ~
+                                        release: ~
 
                         m6video.user.delete:
                             metrics:
                                 -   type: 'increment'
                                     name: 'user.delete'
                                     tags:
-                                        - 'value'
+                                        value: ~
 
                         m6web.cassandra:
                             metrics:
@@ -271,7 +272,7 @@ m6web_statsd_prometheus:
                                     name: 'cassandra.all_keyspaces'
                                     param_value: 'getTiming'
                                     tags:
-                                        - 'command'
+                                        command: ~
 
                         redis.command:
                             metrics:
@@ -280,7 +281,7 @@ m6web_statsd_prometheus:
                                     name: 'cache.redis.composant'
                                     param_value: 'getTiming'
                                     tags:
-                                        - 'command'
+                                        command: ~
 
                         daemon.loop.iteration:
                             metrics:
@@ -289,13 +290,13 @@ m6web_statsd_prometheus:
                                     name: 'worker.iteration'
                                     param_value: 'getTiming'
                                     tags:
-                                        - 'command'
+                                        command: ~
 
                                 -   type: 'timer'
                                     name: 'memory.worker.iteration'
                                     param_value: 'getMemory'
                                     tags:
-                                        - 'command'
+                                        command: ~
 
                         daemon.stop:
                             flush_metrics_queue: true

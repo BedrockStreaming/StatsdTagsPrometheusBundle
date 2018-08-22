@@ -1,13 +1,13 @@
-# Installation
+# Download an installation
 
 ## Install with composer
 ```bash
 composer require m6web/statsd-prometheus-bundle
 ```
 
-## Symfony <4
+## Symfony <4
 
-## Register the bundle
+### Register the bundle
 
 ```php
 // app/AppKernel.php
@@ -18,7 +18,7 @@ composer require m6web/statsd-prometheus-bundle
 ]
 ```
 
-## Set the configuration key
+### Set the configuration key
 Create a file named, for example, `m6web_statsd_prometheus.yml` and add the config root key in a config file:
 ```yaml
 #app/config/m6web_statsd_prometheus.yml
@@ -30,9 +30,9 @@ Include this file in your main config file:
 - { resource: m6web_statsd_prometheus.yml }
 ```
 
-## Symfony >=4
+## Symfony >=4
 
-## Register the bundle (if automatic addition has failed)
+### Register the bundle (if automatic addition has failed)
 
 ```php
 // config/bundles.php
@@ -43,7 +43,7 @@ return [
 ];
 ```
 
-## Add the configuration file
+### Add the configuration file
 Create a file named `config/packages/m6web_statsd_prometheus.yaml` and add 
 the config root key in a config file:
 ```yaml

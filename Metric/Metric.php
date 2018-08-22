@@ -175,7 +175,7 @@ class Metric implements MetricInterface
         if (!empty($this->configurationTags) && is_array($this->configurationTags)) {
             $tags += $this->configurationTags;
         }
-        foreach ($this->tags as $tagName) {
+        foreach ($this->tags as $tagName => $tagAccessor) {
             // Recommended Event type
             if ($this->event instanceof MonitoringEventInterface) {
                 // If the event is a valid type, we can access custom Tags values
@@ -187,7 +187,12 @@ class Metric implements MetricInterface
                 // Legacy support
                 // Try to get the tag value from a function in the event
                 try {
-                    $tags[$tagName] = $this->propertyAccessor->getValue($this->event, $tagName);
+                    if(is_null($tagAccessor)) {
+                        // fallback in the case a tag accessor has not been defined
+                        //we try to access the value with the tag name
+                        $tagAccessor = $tagName;
+                    }
+                    $tags[$tagName] = $this->propertyAccessor->getValue($this->event, $tagAccessor);
                 } catch (\Exception $e) {
                 }
             }

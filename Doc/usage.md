@@ -2,13 +2,13 @@
 
 ## Dispatch your events
 
-### Using MonitorableEventInterface
+### Using MonitoringEventInterface
 
 For every new event you need to dispatch, you have to use a class that implements 
-`M6Web\Bundle\StatsdPrometheusBundle\Events\MonitorableEventInterface`.
+`M6Web\Bundle\StatsdPrometheusBundle\Events\MonitoringEventInterface`.
 
 This bundle offers you a generic implementation called
- `M6Web\Bundle\StatsdPrometheusBundle\Events\MonitorableEvent` that will handle most of your needs.
+ `M6Web\Bundle\StatsdPrometheusBundle\Events\MonitoringEvent` that will handle most of your needs.
  So you won't need to create your own events anymore. You can use this class to send your events
   directly like this:
  
@@ -34,7 +34,7 @@ This bundle offers you a generic implementation called
 #### :warning: Warning
 
 If you really need to create a specific event (for personal reasons), you can define your own class, 
-but make sure that it will implement `MonitorableEventInterface`.
+but make sure that it will implement `MonitoringEventInterface`.
 
 ### Other events and legacy behaviour
 
