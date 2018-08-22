@@ -1,0 +1,34 @@
+{
+    "name": "m6web/statsd-prometheus-bundle",
+    "description": "Add statsd metrics in your symfony app. Allow you to bind metrics on any symfony event.",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "keywords": ["symfony", "bundle", "statsd", "m6web"],
+    "authors": [
+        {
+            "name": "M6Web",
+            "email": "opensource@m6web.fr",
+            "homepage": "https://tech.m6web.fr/"
+        }
+    ],
+    "config": {
+        "bin-dir": "bin",
+        "vendor-dir": "vendor"
+    },
+    "require": {
+        "php": "^7.1",
+        "symfony/property-access": "^3.4 || ^4.0"
+    },
+    "require-dev": {
+        "m6web/php-cs-fixer-config": "^1.0",
+        "symfony/symfony": "^3.4 || ^4.0",
+        "symfony/phpunit-bridge": "^3.4|^4.0",
+        "symfony/var-dumper": "^4.1"
+    },
+    "autoload": {
+        "psr-4": { "M6Web\\Bundle\\StatsdPrometheusBundle\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    }
+}
