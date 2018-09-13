@@ -184,6 +184,39 @@ See [5. Configure the metrics](#5-configure-the-metrics).
 
 ## 5. Configure the metrics
 
+### Metrics naming convention
+
+#### 1. Allowed characters and format
+
+This is the metric name. You can name the metric with lower letters, numbers and underscores: __[a-z0-9\_]__.
+
+You are recommended to name the metrics in snake case. 
+The statsd_exporter will transform every of metric names in snake_case. 
+It will be easier for you to find your metrics later if the names are the same. 
+
+#### 2. Explicit naming
+
+Use explicit names and suffix every metric with its unit.
+
+:information_source: Have a look at the 
+[Prometheus naming rules recommendation](https://prometheus.io/docs/practices/naming/)
+
+#### 3. Unity
+
+Metrics name must be __unique__. 
+You cannot have the same metric name even if you have different types.
+
+The duplicated metric will be __ignored__.
+ 
+#### 4. Stop using dynamic values 
+
+Placeholders (dynamic variables like __request.\<statusCode\>__) in metric names are now __deprecated__. 
+
+You better use __tags__ instead (See [6. Configure the tags](#6-configure-the-tags)). 
+
+[Go back](../README.md)
+
+
 ### Description
 
 This is the main structure you need to use.
@@ -206,9 +239,9 @@ m6web_statsd_prometheus:
                                     param_value: 'metricValue'
                                 #This is the second metric definition   
                                 -   type: 'increment'
-                                    name: 'second_metric_name'
+                                    name: 'second_metric_name_total'
                                     tags:
-                                       - 'additional_parameter'
+                                        additional_parameter: ~
 ```
 
 ### Metric options
@@ -222,18 +255,9 @@ __counter, gauge, increment, decrement, timer__
 
 * `name`: string
 
-This is the metric name. You can name the metric with lower letters, numbers and underscores: __[a-z0-9\_]__.
-
-You are recommended to name the metrics in snake case. The statsd_exporter will transform 
-every of metric names in snake_case. It will be easier for you to find your metrics later if 
-the names are the same. 
-
-Metrics name must be __unique__. You cannot have the same metric name even if you have different types.
-The duplicated metric will be ignored.
- 
-Placeholders (dynamic variables like __request.\<statusCode\>__) in metric names are now __deprecated__. 
-Prometheus does not allow to search on metric name with joker or regex. 
-You have to use __tags__ for this purpose (See [6. Configure the tags](#6-configure-the-tags) ). 
+:warning: See :oncoming_police_car:
+ [Metrics naming rules convention](#metrics-naming-convention)
+  :oncoming_police_car:
 
 * `param_value`: string
 
@@ -249,12 +273,55 @@ See [6. Configure the tags](#6-configure-the-tags)
  
 ## 6. Configure the tags
 
+### :warning: Modifying configuration requires statsd_exporter reboot
+
+Once you've sent a metric, if you change its configuration, changes will be ignored. 
+
+You will need to reboot the statsd_exporter server in order to take into account the new changes.
+
+
+### :oncoming_police_car::oncoming_police_car: Tag naming rules and default configuration 
+
+In order to have common metric names amongst all of our applications, we have defined some common tags names.
+If you need to get one of this data, please use the following name for your tag.
+
+#### Global configuration
+ 
+* `project`: __\[required\]__ 
+Your project name. *(service_6play_users_cloud, service_6play_middleware, ...)*
+
+#### Group configuration
+
+None yet.
+
+#### Metric configuration
+
+* `customer`: default value : *default*. Can be *all* for non-related customer applications.
+* `client`:  (UserBundle) 
+* `platform`: default value : *all* 
+* :warning: __Waiting for validation__ `release`: Value matching with the header X-Client-Release: 
+This will create TOO MUCH metrics 
+* `service`: (???)
+* HTTP Request
+   * `route`: Symfony route name *(status, get_subscriptions, etc.)*
+   * `status`: HTTP response code
+* HTTP Request to an external service
+   * `route`: Symfony route name *(status, get_subscriptions, etc.)*
+   * `status`: HTTP response code
+   * `project_to`: external service called
+* Dynamo: (???) :warning: Work in progress
+   * `table`
+   * `result`
+
+### Tags scopes
+
 There are 3 types of tag that you can use: 
 * __global tag__: it is sent with every event metric. Its value is set in the config file.
 * __group tag__: it is sent with every event metric of the same group. Its value is set in the config file.
 * __metric tag__: it is sent only for the current event metric. Its value is sent with the event.  
 
 Here is an example of how to define those 3 types:
+
 ```yaml
 m6web_statsd_prometheus:
     tags: #Global tags
@@ -266,36 +333,40 @@ m6web_statsd_prometheus:
         default_client:
             server: 'default_server'
             groups:
-                default_group:
-                    tags: #Group tags: only for current group
-                        tag1GroupA: 'tagValueB' #value is required here
-                        tag2GroupA: 'tagValueB'
+                default_group: 
+                    tags: #Group tags
+                        tag_1_group_default: 'tagValueB' #value is required here
+                        tag_2_group_default: 'tagValueB'
                     events:
                         eventName1:
                             metrics:
                                 -   type: 'counter'
                                     name: 'metricName'
                                     param_value: 'counterValue'
-                                    tags: 
-                                        #Metric tags: only for the current event,
-                                        #only labels are set
-                                        #values are defined when the event is sent
-                                        - 'tag1Event1Label'
-                                        - 'tag2Event1Label'
+                                    tags: #Metric tags
+                                        tag_1_event_1: ~ # value here corresponds to an optionnal property accessor
+                                        tag_2_event_1: 'myPropertyAccessor'
+                                            
                         eventName12:
                             metrics:
                                 -   type: 'increment'
                                     name: 'metricName'
-                                    tags: 
-                                        #Metric tags: only for the current event
-                                        - 'tag1Event2'                                                                  
+                                    tags: #Metric tags
+                                        tag_1_event_2: ~                                                                  
 ```
 
-### :warning: Modifying configuration requires statsd_exporter reboot
+### Tag option / structure
 
-Once you've sent a metric, if you change its configuration, changes will be ignored. 
+* `{key}` = tag name
 
-You will need to reboot the statsd_exporter server in order to take into account the new changes.
+The key corresponds to the tag name that will be sent to Prometheus.
+
+* `{value}` = property accessor
+
+You can define, as a value, a property acessor that will return the tag value.
+This is used for legacy purposes, when you work with specific event classes.
+
+If you don't need it, use the null value: `~`.
 
 ### Send tags with event metrics
 
@@ -303,10 +374,60 @@ When you set a tag in a metric, the bundle will look for an associated value to 
 
 If you use the new format, it will look for a parameter named after your tag.
 
-A compatibility fallback will automatically look into your event object, to see if there is a public 
-accessor associated to your tag name. This works like the former placeholders. 
+A compatibility fallback will automatically look into your event object.
+First, if you have defined a property accessor, it will get the tag value there.
+Otherwise, it will check if there is a public accessor associated to your tag name. 
+
+This works like the former placeholders. 
 
 See [Usage documentation](usage.md) for further explanations. 
+
+
+### Tag priority and overriding
+
+You can use the same tag name in the different scopes. The tag value is prioritized in this order:
+1) metric
+2) group
+3) global
+
+This allows you to override a global or a group configuration in a specific context.
+
+Look at this example for further help:
+
+```yaml
+m6web_statsd_prometheus:
+    tags:
+        project: 'service_6play_users_cloud'        
+    
+    clients:
+        client1:            
+            groups:
+                group1:
+                    events:
+                        eventName1:
+                            metrics:
+                                -   type: 'increment'
+                                    name: 'metricName'
+                                    tags: 
+                                        # This tag will override the "project" tag
+                                        # set in the global configuration for this current metric
+                                        project: ~
+                group2:
+                     tags:
+                         tag1GroupA: 'tagValueB'
+                         # This tag will override the "project" tag
+                         # set in the global configuration for this current group
+                         project: "group project"
+                     events:
+                         eventName1:
+                             metrics:
+                                 -   type: 'increment'
+                                     name: 'metricName'
+                                     tags: 
+                                         # This tag will override the "tag1GroupA" tag
+                                         # set in the group configuration for this current metric
+                                         tag1GroupA: ~                                                                                     
+```
  
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
@@ -353,46 +474,47 @@ m6web_statsd_prometheus:
         default_client:
             server: 'default_server'
             groups:
-                default_gruop:
+                default_group:
                     events:
                         kernel.terminate:
                             metrics:
                                 -   type: 'increment'
                                     #project name and dynamics values are removed here for the metric name
-                                    name: 'request' 
+                                    #we also provide a better name according to the naming convention
+                                    name: 'http_request_total' 
                                     tags: #dynamic values are set in tags
-                                        - 'request_host'
-                                        - 'response_statusCode'
+                                        host: 'request_host'
+                                        status: 'response.statusCode'
                         kernel.exception:
                             metrics:
-                                -   type: 'increment'
-                                    #this name below is not very relevant now. 
-                                    #'error' would be enough probably.
-                                    name: 'errors.error' 
+                                -   type: 'increment'                                                                    
+                                    #we provide a better name according to the naming convention
+                                    name: 'http_error_count' 
                                     tags:
-                                        - 'exception.code'
+                                        code: 'exception.code'
                         redis.command:
                             metrics:
                                 -   type: 'increment'
-                                    name: 'cache.redis.composant'
+                                    #we provide a better name according to the naming convention
+                                    name: 'cache_redis_composant_total'
                                     tags:
-                                        - 'command'
+                                        command: ~
                         m6web.guzzlehttp:
                             metrics:
                                 -   type: 'timer'
-                                    name: 'guzzlehttp'
+                                    #we provide a better name according to the naming convention
+                                    name: 'guzzlehttp_seconds'
                                     #this parameter will match with the public function set in the sent event
                                     param_value: 'getTiming' 
                                     tags:
-                                        - 'clientId'
+                                        clientId: ~
                                                                         
-                                -   type: 'increment'
-                                    #when removing placeholders, the metric name is same than the above timer
-                                    #so we had to change it
-                                    name: 'guzzlehttp_increment'  
+                                -   type: 'increment'                                    
+                                    #we provide a better name according to the naming convention
+                                    name: 'guzzlehttp_total'  
                                     tags:
-                                        - 'clientId'
-                                        - 'response_statusCode'
+                                        clientId: ~
+                                        status: 'response.statusCode'
 ```
 
 > :information_source: For further help, have a look at the [Examples](examples.md) section.

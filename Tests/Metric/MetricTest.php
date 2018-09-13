@@ -22,9 +22,9 @@ class MetricTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getDataMonitorableEvents
+     * @dataProvider getDataMonitoringEvents
      */
-    public function testToStringWithMonitorableEventReturnsExpected(
+    public function testToStringWithMonitoringEventReturnsExpected(
         Event $event, array $metricConfig, string $expectedResult
     ) {
         // -- Given --
@@ -123,7 +123,7 @@ class MetricTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function getDataMonitorableEvents()
+    public function getDataMonitoringEvents()
     {
         return [
             // Increment: object MonitoringEvent (no tags)

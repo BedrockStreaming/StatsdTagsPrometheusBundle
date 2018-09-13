@@ -75,7 +75,7 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                            ->integerNode('to_send_limit')->min(1)->end()
+                            ->integerNode('max_queued_metrics')->min(1)->end()
                         ->end()
                     ->end()
                 ->end()
