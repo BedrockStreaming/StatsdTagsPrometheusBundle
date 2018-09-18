@@ -5,6 +5,7 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEventInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Metric implements MetricInterface
@@ -34,6 +35,9 @@ class Metric implements MetricInterface
     /** @var array */
     private $tags;
 
+    /** @var ExpressionLanguage */
+    private $expressionLanguage;
+
     /**
      * Metric constructor.
      *
@@ -51,30 +55,13 @@ class Metric implements MetricInterface
         $this->tags = $metricConfig['tags'];
 
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-    }
-
-    /**
-     * DogStatsD FORMAT :
-     * <metric>:<value>|<type>|@<sample rate>|#tag:value,another_tag:another_value
-     *
-     * @throws MetricException
-     */
-    public function toString(): string
-    {
-        return vsprintf('%s:%s|%s%s', [
-            // Required fields
-            $this->getResolvedMetricName(),
-            $this->getMetricsValue(),
-            $this->getMetricType(),
-            // Optional fields
-            $this->getMetricTags(),
-        ]);
+        $this->expressionLanguage = new ExpressionLanguage();
     }
 
     /**
      * @throws MetricException
      */
-    private function getResolvedMetricName(): string
+    public function getResolvedName(): string
     {
         // We don't want to alter the original metric name
         $resolvedName = $this->name;
@@ -96,26 +83,10 @@ class Metric implements MetricInterface
         return $resolvedName;
     }
 
-    private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders)
-    {
-        foreach ($placeholders as $placeholder) {
-            if ($this->event instanceof MonitoringEventInterface) {
-                $value = $this->event->getParameter($placeholder);
-            } else {
-                // Legacy support
-                $value = $this->propertyAccessor->getValue($this->event, $placeholder);
-            }
-            // Replace placeholders with the associated value
-            $metricName = str_replace('<'.$placeholder.'>', $value, $metricName);
-        }
-
-        return $metricName;
-    }
-
     /**
      * @throws MetricException
      */
-    private function getMetricsValue(): float
+    public function getResolvedValue(): string
     {
         switch ($this->type) {
             case 'increment':
@@ -145,10 +116,7 @@ class Metric implements MetricInterface
         return \call_user_func([$this->event, $this->paramValue]);
     }
 
-    /**
-     * @throws MetricException
-     */
-    private function getMetricType(): string
+    public function getResolvedType(): string
     {
         switch ($this->type) {
             case 'counter':
@@ -164,17 +132,17 @@ class Metric implements MetricInterface
         throw new MetricException('This metric type is not handled');
     }
 
-    /**
-     * @return string metric labels on format "#label1:value1,label2:value2,label3:value3"
-     */
-    private function getMetricTags(): string
+    public function getResolvedTags(array $resolvers = []): array
     {
         $tags = [];
 
         // Add global parameters (configured in client or group)
-        if (!empty($this->configurationTags) && is_array($this->configurationTags)) {
-            $tags += $this->configurationTags;
+        if (is_array($this->configurationTags)) {
+            foreach ($this->configurationTags as $tagKey => $tagValue) {
+                $tags[$tagKey] = $this->resolveTagValue($tagValue, $resolvers);
+            }
         }
+
         foreach ($this->tags as $tagName => $tagAccessor) {
             // Recommended Event type
             if ($this->event instanceof MonitoringEventInterface) {
@@ -187,7 +155,7 @@ class Metric implements MetricInterface
                 // Legacy support
                 // Try to get the tag value from a function in the event
                 try {
-                    if(is_null($tagAccessor)) {
+                    if (is_null($tagAccessor)) {
                         // fallback in the case a tag accessor has not been defined
                         //we try to access the value with the tag name
                         $tagAccessor = $tagName;
@@ -198,20 +166,34 @@ class Metric implements MetricInterface
             }
         }
 
-        return $this->formatTagsInline($tags);
+        return $tags;
     }
 
-    private function formatTagsInline(array $tags): string
+    private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders)
     {
-        $formatLines = array_map(
-            function ($key, $value) {
-                return sprintf('%s:%s', $key, $value);
-            },
-            array_keys($tags),
-            $tags
-        );
-        $inlineTags = implode(',', $formatLines);
+        foreach ($placeholders as $placeholder) {
+            if ($this->event instanceof MonitoringEventInterface) {
+                $value = $this->event->getParameter($placeholder);
+            } else {
+                // Legacy support
+                $value = $this->propertyAccessor->getValue($this->event, $placeholder);
+            }
+            // Replace placeholders with the associated value
+            $metricName = str_replace('<'.$placeholder.'>', $value, $metricName);
+        }
 
-        return !empty($inlineTags) ? '|#'.$inlineTags : '';
+        return $metricName;
+    }
+
+    private function resolveTagValue(string $valueToResolve, array $resolvers): string
+    {
+        if (strpos($valueToResolve, '@=') === 0) {
+            // Service resolution
+            $resolvedValue = $this->expressionLanguage->evaluate(substr($valueToResolve, 2), $resolvers);
+        } else {
+            $resolvedValue = $valueToResolve;
+        }
+
+        return $resolvedValue;
     }
 }

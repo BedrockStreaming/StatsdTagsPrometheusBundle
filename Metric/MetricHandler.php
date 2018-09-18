@@ -4,38 +4,35 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Metric;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Client\ClientInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class MetricHandler
 {
+    const METRIC_FORMAT = '%name:%value|%type%tags';
+
+    /** @var ClientInterface */
+    protected $client;
+
+    /** @var ContainerInterface */
+    protected $container;
+
+    /** @var Request */
+    protected $currentRequest;
+
+    /** @var \SplQueue */
+    protected $metrics;
+
     /** @var int */
     protected $maxNumberOfMetricToQueue;
 
-    /** @var \SplQueue */
-    private $metrics;
-
-    private $flushMetricsQueue = false;
-
-    /** @var ClientInterface */
-    private $client;
+    /** @var bool */
+    protected $flushMetricsQueue = false;
 
     public function __construct()
     {
         $this->initMetricsQueue();
-    }
-
-    public function setClient(ClientInterface $client)
-    {
-        $this->client = $client;
-    }
-
-    private function initMetricsQueue()
-    {
-        $this->metrics = new \SplQueue();
-    }
-
-    public function setMetricsQueue(\SplQueue $queue)
-    {
-        $this->metrics = $queue;
     }
 
     /**
@@ -53,24 +50,10 @@ class MetricHandler
 
     /**
      * We define here some rules to force sending the metrics even if we are not required to.
-     *
-     * @return bool
      */
     public function hasToSendMetrics(): bool
     {
         return $this->isFlushMetricsQueue() || $this->isMaxNumberOfMetricsReached();
-    }
-
-    public function isFlushMetricsQueue(): bool
-    {
-        return $this->flushMetricsQueue;
-    }
-
-    public function setFlushMetricsQueue(bool $flushMetricsQueue): self
-    {
-        $this->flushMetricsQueue = $flushMetricsQueue;
-
-        return $this;
     }
 
     public function isMaxNumberOfMetricsReached(): bool
@@ -78,11 +61,6 @@ class MetricHandler
         return
             !empty($this->maxNumberOfMetricToQueue) &&
             ($this->getMetrics()->count() >= $this->maxNumberOfMetricToQueue);
-    }
-
-    public function getMetrics(): \SplQueue
-    {
-        return $this->metrics;
     }
 
     public function sendMetrics(): bool
@@ -97,31 +75,6 @@ class MetricHandler
         return true;
     }
 
-    /**
-     * Format data to send to the server
-     */
-    private function getMetricsAsArray(): array
-    {
-        $metrics = [];
-        foreach ($this->getMetrics() as $metric) {
-            if ($metric instanceof MetricInterface) {
-                try {
-                    $metrics[] = $metric->toString();
-                } catch (MetricException $e) {
-                }
-            }
-        }
-
-        return $metrics;
-    }
-
-    private function clearMetricsQueue(): self
-    {
-        $this->initMetricsQueue();
-
-        return $this;
-    }
-
     public function addMetricToQueue(MetricInterface $metric): self
     {
         $this->metrics->enqueue($metric);
@@ -134,10 +87,120 @@ class MetricHandler
         $this->metrics->dequeue();
     }
 
+    public function setClient(ClientInterface $client): void
+    {
+        $this->client = $client;
+    }
+
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
+    }
+
+    public function setCurrentRequest(RequestStack $requestStack): void
+    {
+        $this->currentRequest = $requestStack->getCurrentRequest();
+    }
+
+    public function setMetricsQueue(\SplQueue $queue): void
+    {
+        $this->metrics = $queue;
+    }
+
     public function setMaxNumberOfMetricToQueue($maxNumberOfMetricToQueue): self
     {
         $this->maxNumberOfMetricToQueue = $maxNumberOfMetricToQueue;
 
         return $this;
+    }
+
+    public function getMetrics(): \SplQueue
+    {
+        return $this->metrics;
+    }
+
+    public function isFlushMetricsQueue(): bool
+    {
+        return $this->flushMetricsQueue;
+    }
+
+    public function setFlushMetricsQueue(bool $flushMetricsQueue): self
+    {
+        $this->flushMetricsQueue = $flushMetricsQueue;
+
+        return $this;
+    }
+
+    protected function initMetricsQueue(): void
+    {
+        $this->metrics = new \SplQueue();
+    }
+
+    protected function clearMetricsQueue(): self
+    {
+        $this->initMetricsQueue();
+
+        return $this;
+    }
+
+    /**
+     * Format data to send to the server
+     */
+    protected function getMetricsAsArray(): array
+    {
+        $metrics = [];
+        foreach ($this->getMetrics() as $metric) {
+            if ($metric instanceof MetricInterface) {
+                try {
+                    $metrics[] = $this->getFormattedMetric($metric);
+                } catch (MetricException $e) {
+                }
+            }
+        }
+
+        return $metrics;
+    }
+
+    /**
+     * DogStatsD FORMAT :
+     * <metric>:<value>|<type>|@<sample rate>|#tag:value,another_tag:another_value
+     *
+     * @throws MetricException
+     */
+    public function getFormattedMetric(MetricInterface $metric)
+    {
+        return $this->getFormattedMetricFromData([
+            '%name' => $metric->getResolvedName(),
+            '%value' => $metric->getResolvedValue(),
+            '%type' => $metric->getResolvedType(),
+            '%tags' => $this->formatTagsInline(
+                $metric->getResolvedTags([
+                    'container' => $this->container,
+                    'request' => $this->currentRequest,
+                ])
+            ),
+        ]);
+    }
+
+    protected function getFormattedMetricFromData(array $data): string
+    {
+        return str_replace(array_keys($data), array_values($data), self::METRIC_FORMAT);
+    }
+
+    /**
+     * Format metric tags on format "|#tag1:value1,tag2:value2,tag3:value3"
+     */
+    protected function formatTagsInline(array $tags): string
+    {
+        $formatLines = array_map(
+            function ($key, $value) {
+                return sprintf('%s:%s', $key, $value);
+            },
+            array_keys($tags),
+            $tags
+        );
+        $inlineTags = implode(',', $formatLines);
+
+        return !empty($inlineTags) ? '|#'.$inlineTags : '';
     }
 }

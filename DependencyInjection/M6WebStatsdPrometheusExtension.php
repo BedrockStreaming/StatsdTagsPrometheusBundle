@@ -175,7 +175,7 @@ class M6WebStatsdPrometheusExtension extends Extension
         ]);
 
         foreach ($this->clientServiceIds as $serviceId) {
-            $definition->addMethodCall('addStatsdClient', [
+            $definition->addMethodCall('addEventListener', [
                 $serviceId,
                 new Reference($serviceId),
             ]);
@@ -198,7 +198,13 @@ class M6WebStatsdPrometheusExtension extends Extension
         return (new Definition(MetricHandler::class))
             ->addMethodCall('setClient', [
                 $this->getMetricUdpClientDefinition($clientName, $serverName),
-            ]);
+            ])
+            // We define here every service that we can inject in metric resolution.
+            // We use it only for tags right now. That enables us to use complicated tag names
+            // such as '@=container.get('kernel')'
+            // See the documentation for further help
+            ->addMethodCall('setContainer', [new Reference('service_container')])
+            ->addMethodCall('setCurrentRequest', [new Reference('request_stack')]);
     }
 
     protected function getMetricUdpClientDefinition(string $clientName, string $serverName): Definition
@@ -218,7 +224,6 @@ class M6WebStatsdPrometheusExtension extends Extension
                 $serverName
             ));
         }
-
         // Matched server configurations.
         return new Definition(Server::class, [
             $serverName,

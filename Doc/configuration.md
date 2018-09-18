@@ -184,39 +184,6 @@ See [5. Configure the metrics](#5-configure-the-metrics).
 
 ## 5. Configure the metrics
 
-### Metrics naming convention
-
-#### 1. Allowed characters and format
-
-This is the metric name. You can name the metric with lower letters, numbers and underscores: __[a-z0-9\_]__.
-
-You are recommended to name the metrics in snake case. 
-The statsd_exporter will transform every of metric names in snake_case. 
-It will be easier for you to find your metrics later if the names are the same. 
-
-#### 2. Explicit naming
-
-Use explicit names and suffix every metric with its unit.
-
-:information_source: Have a look at the 
-[Prometheus naming rules recommendation](https://prometheus.io/docs/practices/naming/)
-
-#### 3. Unity
-
-Metrics name must be __unique__. 
-You cannot have the same metric name even if you have different types.
-
-The duplicated metric will be __ignored__.
- 
-#### 4. Stop using dynamic values 
-
-Placeholders (dynamic variables like __request.\<statusCode\>__) in metric names are now __deprecated__. 
-
-You better use __tags__ instead (See [6. Configure the tags](#6-configure-the-tags)). 
-
-[Go back](../README.md)
-
-
 ### Description
 
 This is the main structure you need to use.
@@ -255,10 +222,6 @@ __counter, gauge, increment, decrement, timer__
 
 * `name`: string
 
-:warning: See :oncoming_police_car:
- [Metrics naming rules convention](#metrics-naming-convention)
-  :oncoming_police_car:
-
 * `param_value`: string
 
 This option defines which tag will return the metric value.
@@ -272,46 +235,6 @@ See [6. Configure the tags](#6-configure-the-tags)
 
  
 ## 6. Configure the tags
-
-### :warning: Modifying configuration requires statsd_exporter reboot
-
-Once you've sent a metric, if you change its configuration, changes will be ignored. 
-
-You will need to reboot the statsd_exporter server in order to take into account the new changes.
-
-
-### :oncoming_police_car::oncoming_police_car: Tag naming rules and default configuration 
-
-In order to have common metric names amongst all of our applications, we have defined some common tags names.
-If you need to get one of this data, please use the following name for your tag.
-
-#### Global configuration
- 
-* `project`: __\[required\]__ 
-Your project name. *(service_6play_users_cloud, service_6play_middleware, ...)*
-
-#### Group configuration
-
-None yet.
-
-#### Metric configuration
-
-* `customer`: default value : *default*. Can be *all* for non-related customer applications.
-* `client`:  (UserBundle) 
-* `platform`: default value : *all* 
-* :warning: __Waiting for validation__ `release`: Value matching with the header X-Client-Release: 
-This will create TOO MUCH metrics 
-* `service`: (???)
-* HTTP Request
-   * `route`: Symfony route name *(status, get_subscriptions, etc.)*
-   * `status`: HTTP response code
-* HTTP Request to an external service
-   * `route`: Symfony route name *(status, get_subscriptions, etc.)*
-   * `status`: HTTP response code
-   * `project_to`: external service called
-* Dynamo: (???) :warning: Work in progress
-   * `table`
-   * `result`
 
 ### Tags scopes
 
@@ -327,7 +250,11 @@ m6web_statsd_prometheus:
     tags: #Global tags
         exampleTag: 'example_tag_Value' #value is required here
         #Using global tags, we can inject the project name in every sent metrics
-        project: 'service_6play_users_cloud'        
+        project: 'my_project'        
+        #The service container is injected to resolve configuration tags value
+        dynamic_one: '@=container.get("my_service_id").getMyValue()' 
+        #The current request is injected to resolve configuration tags value
+        another_dynamic_one: '@=request.get("X-Custom-Header")' 
     
     clients:
         default_client:
@@ -344,7 +271,7 @@ m6web_statsd_prometheus:
                                     name: 'metricName'
                                     param_value: 'counterValue'
                                     tags: #Metric tags
-                                        tag_1_event_1: ~ # value here corresponds to an optionnal property accessor
+                                        tag_1_event_1: ~ #value here corresponds to an optional property accessor
                                         tag_2_event_1: 'myPropertyAccessor'
                                             
                         eventName12:
@@ -367,6 +294,39 @@ You can define, as a value, a property acessor that will return the tag value.
 This is used for legacy purposes, when you work with specific event classes.
 
 If you don't need it, use the null value: `~`.
+
+### Tag resolvers
+
+2 services are injected into tag value resolution: 
+- `container` = container
+- `request` = current request. This is an alias for `container.get('request_stack').getCurrentRequest()`
+
+To activate those resolvers, you need to add: `@=` at the beggining of you tag value:
+```yaml
+tagName: '@=request.get("X-Header")'
+```
+
+Your tag value will be evaluated by the Symfony [ExpressionLanguage](https://symfony.com/doc/current/components/expression_language.html) component. 
+
+You can use ternary operator to get different values according to the contaxt:
+```yaml
+#Ternary operator:
+tagName1: '@=request.get("X-Header") ? request.get("X-Header") : "default"'
+#Or, simplified ternary operator:
+tagName2: '@=request.get("X-Header") ?: "default"'
+```
+
+Ten, you can use more complicated tests to check a value:
+```yaml
+#Logic operator
+tagName3: '@=request.get("X-Header") &&  not(request.get("X-Header-secondary")) ? "yes" : "no"'
+#Regex
+tagName3: '@=request.get("X-Header") matches "/def.*ult/" ? "yes" : "no"'
+```
+
+Please, have a look at the documentation syntax to go further in your usage: [ExpressionLanguage syntax](https://symfony.com/doc/current/components/expression_language/syntax.html).
+
+:warning: This works only for global and group configuration tags.
 
 ### Send tags with event metrics
 
@@ -397,7 +357,7 @@ Look at this example for further help:
 ```yaml
 m6web_statsd_prometheus:
     tags:
-        project: 'service_6play_users_cloud'        
+        project: 'my_project'        
     
     clients:
         client1:            
@@ -428,6 +388,13 @@ m6web_statsd_prometheus:
                                          # set in the group configuration for this current metric
                                          tag1GroupA: ~                                                                                     
 ```
+
+### :rotating_light: Modifying configuration requires statsd_exporter reboot 
+
+Once you've sent a metric, if you change its configuration, changes will be ignored. 
+
+You will need to reboot the statsd_exporter server in order to take into account the new changes.
+
  
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
@@ -450,14 +417,14 @@ m6_statsd:
             server: 'default_server'
             events:
                 kernel.terminate:
-                    increment: 'request.service-6play-broadcast.<request_host>.<response_statusCode>'
+                    increment: 'request.<request_host>.<response_statusCode>'
                 kernel.exception:
-                    increment: 'errors.<exception.code>.service-6play-broadcast.error'
+                    increment: 'errors.<exception.code>.error'
                 redis.command:
-                    increment: 'cache.redis.composant.<command>.service-6play-broadcast'
+                    increment: 'cache.redis.composant.<command>'
                 m6web.guzzlehttp:
-                    timing: 'guzzlehttp.service-6play-broadcast.<clientId>'
-                    increment: 'guzzlehttp.service-6play-broadcast.<clientId>.<response_statusCode>'
+                    timing: 'guzzlehttp.<clientId>'
+                    increment: 'guzzlehttp.<clientId>.<response_statusCode>'
 ``` 
 This is how you need to change it:
 ```yaml
@@ -469,7 +436,7 @@ m6web_statsd_prometheus:
     tags:
         #this will inject the project name in all metrics automatically. 
         #Use snake case.
-        project: 'service_6play_broadcast'         
+        project: 'my_project'         
     clients:
         default_client:
             server: 'default_server'

@@ -21,15 +21,7 @@ Statsd Bundle for Prometheus.
 
 * See the [download and install](Doc/installation.md) documentation
 
-
 ## 2. Configure the bundle
-
-:warning: First of all, have a look at the 
-:oncoming_police_car::oncoming_police_car:
-[Metrics naming rules convention](Doc/configuration.md#metrics-naming-convention)
-:oncoming_police_car::oncoming_police_car:
-
-Then:
 
 1. [Configure the servers](Doc/configuration.md#1-configure-the-servers)
 2. [Configure the clients](Doc/configuration.md#2-configure-the-clients)
@@ -39,13 +31,10 @@ Then:
 6. [Configure the tags](Doc/configuration.md#6-configure-the-tags)
 7. [Compatibility and legacy behaviour](Doc/configuration.md#7-compatibility-and-legacy-behaviour)
 
-
 ## 3. Usage & examples
 
 * See [How to use the bundle](Doc/usage.md) and [Code examples](Doc/examples.md).
 * See [Prometheus in Grafana](Doc/prometheus-grafana.md) (:warning: Work in progress).
-
-
 
 ## Contribution & Tests
 

@@ -14,7 +14,7 @@ This is a configuration example that we will use for this documentation:
 m6web_statsd_prometheus:
     servers: [...]
     tags:
-        project: 'service_6play_users_cloud'
+        project: 'my_project'
     clients:
         default_client:
             server: 'default_server'
@@ -58,24 +58,24 @@ Using tags, you can filter this metric for a specific context. The syntax is:
 
 `metric_name{tag_name="tag_value"}`
 
-In the configuration example, we have set up a tag named "project" which has the value "service_6play_users_cloud". 
-So, if we want to get the metrics __http_request__ metrics sent for __service_6play_users_cloud__ project, 
+In the configuration example, we have set up a tag named "project" which has the value "MonitoringEvent_6play_users_cloud". 
+So, if we want to get the metrics __http_request__ metrics sent for __my_project__ project, 
 we would do this:
 
-`http_request_total{project="service_6play_users_cloud"}`
+`http_request_total{project="my_project"}`
 
 Maybe you want to filter and get only metrics with an HTTP Code 200:
 
-`http_request_total{project="service_6play_users_cloud",statusCode="200"}`
+`http_request_total{project="my_project",statusCode="200"}`
 
 Or maybe get, every status code that begins with "2..":
 
-`http_request_total{project="service_6play_users_cloud",statusCode=~"2.+"}`
+`http_request_total{project="my_project",statusCode=~"2.+"}`
 
 
 If you want to get this result only for the __status__ route:
 
-`http_request_total{project="service_6play_users_cloud",statusCode="200",routeName="status"}`
+`http_request_total{project="my_project",statusCode="200",routeName="status"}`
 
 You can only use regex on the tags value. The metric name is not queryable like this.
 For this purpose, Prometheus injects the metric name in an internal tag named  `__name__`.
@@ -118,17 +118,17 @@ This function gives you an average rate per second of your value.
 
 Given:
 * your counter: http_request_seconds_sum
-* filtered on the __service_6play_users__ project
+* filtered on the __my_project__ project
 * the range time will be 2 minutes (with actual settings, we cannot have smaller ranges, Prometheus scrappes every minute)
 
 Then, this is how your average rate per second:
 ```
-rate(http_request_seconds_count{project="service_6play_users"}[2m])
+rate(http_request_seconds_count{project="my_project"}[2m])
 ```
 
 To be able to have your rate __per minute__, you'll need to multiply by 60.
 ```
-rate(http_request_seconds_count{project="service_6play_users"}[2m]) * 60
+rate(http_request_seconds_count{project="my_project"}[2m]) * 60
 ```
 
 

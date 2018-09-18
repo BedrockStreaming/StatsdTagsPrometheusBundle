@@ -3,6 +3,7 @@
 namespace M6Web\Bundle\StatsdPrometheusBundle\DataCollector;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
+use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -12,8 +13,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class StatsdDataCollector extends DataCollector
 {
-    /** @var array */
-    private $statsdClients;
+    /** @var EventListener[] */
+    private $eventListeners;
 
     public function __construct()
     {
@@ -25,7 +26,7 @@ class StatsdDataCollector extends DataCollector
      */
     public function reset()
     {
-        $this->statsdClients = [];
+        $this->eventListeners = [];
         $this->data = [
             'clients' => [],
             'operations' => 0,
@@ -40,16 +41,18 @@ class StatsdDataCollector extends DataCollector
     public function onKernelResponse($event)
     {
         if (HttpKernelInterface::MASTER_REQUEST == $event->getRequestType()) {
-            foreach ($this->statsdClients as $clientName => $client) {
+            foreach ($this->eventListeners as $serviceId => $eventListener) {
                 $clientInfo = [
-                    'name' => $clientName,
+                    'name' => $serviceId,
                     'operations' => [],
                 ];
-                foreach ($client->getMetricHandler()->getMetrics() as $metric) {
+                $metricHandler = $eventListener->getMetricHandler();
+
+                foreach ($metricHandler->getMetrics() as $metric) {
                     if ($metric instanceof MetricInterface) {
                         try {
                             $clientInfo['operations'][] = [
-                                'message' => $metric->toString(),
+                                'message' => $metricHandler->getFormattedMetric($metric),
                             ];
                             $this->data['operations']++;
                         } catch (MetricException $e) {
@@ -62,14 +65,11 @@ class StatsdDataCollector extends DataCollector
     }
 
     /**
-     * Add a statsd client to monitor
-     *
-     * @param string $clientAlias  The client alias
-     * @param object $statsdClient A statsd client instance
+     * Add a Prometheus event listener to monitor
      */
-    public function addStatsdClient($clientAlias, $statsdClient)
+    public function addEventListener(string $serviceId, EventListener $eventListener)
     {
-        $this->statsdClients[$clientAlias] = $statsdClient;
+        $this->eventListeners[$serviceId] = $eventListener;
     }
 
     /**
