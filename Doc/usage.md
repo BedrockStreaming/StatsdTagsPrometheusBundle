@@ -62,7 +62,7 @@ m6web_statsd_prometheus:
     #Global tags  
     tags:         
         #Using global tags, we can inject the project name in every sent metrics
-        project: 'service_6play_users_cloud'        
+        project: 'my_project_name'        
     
     clients:
         #Use explicit default naming
@@ -89,7 +89,7 @@ It can be confusing to se only "default" value everywhere. It would be better to
 Add a global tag named `project` to inject the project name in every metric that you will send.
 
 Name your project in `snake_case`:
- * __service-6play-users__ becomes __service_6play_users__
+ * __my-project-name__ becomes __my_project_name__
 
 
 [Go back](../README.md)

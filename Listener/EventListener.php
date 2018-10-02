@@ -38,7 +38,6 @@ class EventListener
                 (new Metric($event, $metricConfig))
             );
         }
-
         // We ask for the metric handler to try to send the message
         // "Try" means that the handler has to follow some rules, and if those rules are not valid,
         // It won't send anything. The handler knows its job.
