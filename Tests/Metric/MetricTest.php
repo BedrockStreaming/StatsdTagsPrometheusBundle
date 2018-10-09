@@ -4,8 +4,9 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Metric;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
+use PHPUnit\Framework\TestCase;
 
-class MetricTest extends \PHPUnit_Framework_TestCase
+class MetricTest extends TestCase
 {
     /**
      * @dataProvider dataProviderGetMetricsName

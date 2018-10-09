@@ -2,11 +2,12 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Client;
 
-use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEvent;
+use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
+use PHPUnit\Framework\TestCase;
 
-class EventListenerTest extends \PHPUnit_Framework_TestCase
+class EventListenerTest extends TestCase
 {
     public function testSetFlushMetricsQueueIsAlwaysCalledWhenHandledEventIsSentInHandleEvent()
     {

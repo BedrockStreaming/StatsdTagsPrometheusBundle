@@ -7,9 +7,10 @@ use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\Event;
 
-class MetricHandlerTest extends \PHPUnit_Framework_TestCase
+class MetricHandlerTest extends TestCase
 {
     public function testGetMetricsReturnsExpectedWhenAddMetric()
     {

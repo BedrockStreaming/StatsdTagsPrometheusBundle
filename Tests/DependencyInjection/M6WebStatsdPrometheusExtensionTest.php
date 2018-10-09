@@ -3,11 +3,12 @@
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\DependencyInjection;
 
 use M6Web\Bundle\StatsdPrometheusBundle\DependencyInjection\M6WebStatsdPrometheusExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Yaml\Yaml;
 
-class M6WebStatsdPrometheusExtensionTest extends \PHPUnit_Framework_TestCase
+class M6WebStatsdPrometheusExtensionTest extends TestCase
 {
     use \Symfony\Component\VarDumper\Test\VarDumperTestTrait;
 
