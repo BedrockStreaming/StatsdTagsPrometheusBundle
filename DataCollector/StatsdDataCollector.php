@@ -6,9 +6,9 @@ use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricInterface;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class StatsdDataCollector extends DataCollector
