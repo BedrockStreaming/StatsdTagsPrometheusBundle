@@ -23,6 +23,9 @@ class M6WebStatsdPrometheusExtension extends Extension
     /** @var ContainerBuilder */
     private $container;
 
+    /** @var string */
+    private $metricsPrefix = '';
+
     /** @var array */
     private $clientServiceIds = [];
 
@@ -45,6 +48,7 @@ class M6WebStatsdPrometheusExtension extends Extension
         $configuration = new Configuration(self::CONFIG_ROOT_KEY);
         $config = $this->processConfiguration($configuration, $configs);
 
+        $this->metricsPrefix = $config['metrics']['prefix'] ?? '';
         $this->servers = $config['servers'] ?? [];
         $this->clients = $config['clients'] ?? [];
         $this->tags = $config['tags'] ?? [];
@@ -138,6 +142,8 @@ class M6WebStatsdPrometheusExtension extends Extension
                         $tagsConfig,
                         $eventsGroupConfig['tags'] ?? []
                     );
+                    // Prefix the metric name.
+                    $metricConfig['name'] = $this->metricsPrefix.$metricConfig['name'];
                 }
                 // Set all the metrics config array n the object
                 // One event can send several metrics. Multiple metrics will be handled in the Listener manager.
