@@ -184,6 +184,17 @@ See [5. Configure the metrics](#5-configure-the-metrics).
 
 ## 5. Configure the metrics
 
+### Global prefix
+
+You can set a global prefix that will be prepend to every metrics created.
+It is useful when sharing your prometheus storage with multiple organizations.
+
+```yaml
+m6web_statsd_prometheus:
+    metrics: 
+        prefix: 'myorganization_'
+```
+
 ### Description
 
 This is the main structure you need to use.
@@ -221,6 +232,9 @@ This is the metric type.
 __counter, gauge, increment, decrement, timer__ 
 
 * `name`: string
+
+__Reminder__: The name of all your metrics will be prefixed by the value of `m6web_statsd_prometheus.metrics.prefix`.
+By default none.
 
 * `param_value`: string
 

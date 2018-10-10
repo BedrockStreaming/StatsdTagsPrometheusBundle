@@ -23,12 +23,24 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root($this->configurationRootKey);
 
+        $this->addMetricsSection($rootNode);
         $this->addServersSection($rootNode);
         $this->addClientsSection($rootNode);
         $this->addTagsSection($rootNode);
         $this->addDefaultEventSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    private function addMetricsSection(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('metrics')
+                    ->children()
+                        ->scalarNode('prefix')->end()
+                    ->end()
+            ->end();
     }
 
     private function addServersSection(ArrayNodeDefinition $rootNode): void

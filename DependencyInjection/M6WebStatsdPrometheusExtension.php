@@ -23,6 +23,9 @@ class M6WebStatsdPrometheusExtension extends Extension
     /** @var ContainerBuilder */
     private $container;
 
+    /** @var string */
+    private $metricsPrefix = '';
+
     /** @var array */
     private $clientServiceIds = [];
 
@@ -35,16 +38,22 @@ class M6WebStatsdPrometheusExtension extends Extension
     /** @var array */
     private $tags;
 
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        return new Configuration(self::CONFIG_ROOT_KEY);
+    }
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         $this->container = $container;
 
-        $loader = (new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config')));
+        $loader = (new Loader\YamlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources/config')));
         $loader->load('services.yml');
 
-        $configuration = new Configuration(self::CONFIG_ROOT_KEY);
+        $configuration = $this->getConfiguration($configs, $this->container);
         $config = $this->processConfiguration($configuration, $configs);
 
+        $this->metricsPrefix = $config['metrics']['prefix'] ?? '';
         $this->servers = $config['servers'] ?? [];
         $this->clients = $config['clients'] ?? [];
         $this->tags = $config['tags'] ?? [];
@@ -138,6 +147,8 @@ class M6WebStatsdPrometheusExtension extends Extension
                         $tagsConfig,
                         $eventsGroupConfig['tags'] ?? []
                     );
+                    // Prefix the metric name.
+                    $metricConfig['name'] = $this->metricsPrefix.$metricConfig['name'];
                 }
                 // Set all the metrics config array n the object
                 // One event can send several metrics. Multiple metrics will be handled in the Listener manager.
