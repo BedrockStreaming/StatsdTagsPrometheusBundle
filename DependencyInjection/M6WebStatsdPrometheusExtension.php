@@ -38,14 +38,19 @@ class M6WebStatsdPrometheusExtension extends Extension
     /** @var array */
     private $tags;
 
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        return new Configuration(self::CONFIG_ROOT_KEY);
+    }
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         $this->container = $container;
 
-        $loader = (new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config')));
+        $loader = (new Loader\YamlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources/config')));
         $loader->load('services.yml');
 
-        $configuration = new Configuration(self::CONFIG_ROOT_KEY);
+        $configuration = $this->getConfiguration($configs, $this->container);
         $config = $this->processConfiguration($configuration, $configs);
 
         $this->metricsPrefix = $config['metrics']['prefix'] ?? '';
