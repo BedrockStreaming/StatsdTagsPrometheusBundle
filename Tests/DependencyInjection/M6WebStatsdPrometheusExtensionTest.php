@@ -40,6 +40,9 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         $this->assertEquals($expected, $this->extension->getClients());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testLoadCorrectTagsConfigurationDoesNoesNotThrowException()
     {
         // -- Given --
@@ -69,6 +72,9 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         $this->extension->load([$config], $this->container);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testLoadCorrectYmlConfigurationFileDoesNotThrowException()
     {
         // -- Given --
