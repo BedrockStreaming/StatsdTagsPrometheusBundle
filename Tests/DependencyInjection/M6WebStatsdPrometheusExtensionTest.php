@@ -3,11 +3,12 @@
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\DependencyInjection;
 
 use M6Web\Bundle\StatsdPrometheusBundle\DependencyInjection\M6WebStatsdPrometheusExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Yaml\Yaml;
 
-class M6WebStatsdPrometheusExtensionTest extends \PHPUnit_Framework_TestCase
+class M6WebStatsdPrometheusExtensionTest extends TestCase
 {
     use \Symfony\Component\VarDumper\Test\VarDumperTestTrait;
 
@@ -39,6 +40,9 @@ class M6WebStatsdPrometheusExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->extension->getClients());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testLoadCorrectTagsConfigurationDoesNoesNotThrowException()
     {
         // -- Given --
@@ -68,6 +72,9 @@ class M6WebStatsdPrometheusExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load([$config], $this->container);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testLoadCorrectYmlConfigurationFileDoesNotThrowException()
     {
         // -- Given --

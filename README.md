@@ -1,4 +1,4 @@
-# StatsdPrometheusBundle
+# StatsdPrometheusBundle [![Build Status](https://travis-ci.org/M6Web/StatsdTagsPrometheusBundle.svg?branch=master)](https://travis-ci.org/M6Web/StatsdTagsPrometheusBundle)
 
 Statsd Bundle for Prometheus. 
 

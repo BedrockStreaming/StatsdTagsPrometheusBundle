@@ -2,8 +2,8 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\DependencyInjection;
 
-use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\Server;
+use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\DataCollector\StatsdDataCollector;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\ConsoleListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
