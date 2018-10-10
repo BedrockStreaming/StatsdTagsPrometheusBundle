@@ -229,7 +229,10 @@ m6web_statsd_prometheus:
 This is the metric type.
  
  Available values are: 
-__counter, gauge, increment, decrement, timer__ 
+__counter, gauge, increment, timer__
+
+Note: The *increment* type is an alias of the *counter* type. 
+The bundle will automatically set its value to 1.  
 
 * `name`: string
 

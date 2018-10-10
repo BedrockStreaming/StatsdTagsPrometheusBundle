@@ -1,8 +1,6 @@
 # StatsdPrometheusBundle [![Build Status](https://travis-ci.org/M6Web/StatsdTagsPrometheusBundle.svg?branch=master)](https://travis-ci.org/M6Web/StatsdTagsPrometheusBundle)
 
-Statsd Bundle for Prometheus. 
-
-:baby_symbol: Alpha version 
+Statsd Bundle for Prometheus.  
 
 ## Features
 
