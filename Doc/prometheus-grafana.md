@@ -10,6 +10,8 @@ Getting started with Prometheus
 
 This is a configuration example that we will use for this documentation:
 
+**Note**: You will need to add the `m6web/http-kernel-bundle` to listen to the `m6kernel.terminate` and get the timing from the event. 
+
 ```yaml
 m6web_statsd_prometheus:
     servers: [...]
