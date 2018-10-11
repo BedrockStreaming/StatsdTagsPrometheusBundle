@@ -31,5 +31,8 @@
         "exclude-from-classmap": [
             "/Tests/"
         ]
+    },
+    "suggest": {
+        "m6web/http-kernel-bundle": "Add the timing to the kernel terminate event."
     }
 }
