@@ -70,16 +70,6 @@ class MetricTest extends TestCase
                 'c',
             ],
             [
-                new MonitoringEvent(['placeHolder' => 'custom_name']),
-                [
-                    'type' => 'decrement',
-                    'name' => 'http_request_total',
-                    'configurationTags' => [],
-                    'tags' => [],
-                ],
-                'c',
-            ],
-            [
                 new MonitoringEvent(),
                 [
                     'type' => 'counter',
@@ -135,16 +125,6 @@ class MetricTest extends TestCase
                     'tags' => [],
                 ],
                 '1',
-            ],
-            [
-                new MonitoringEvent(['placeHolder' => 'custom_name']),
-                [
-                    'type' => 'decrement',
-                    'name' => 'http_request_total',
-                    'configurationTags' => [],
-                    'tags' => [],
-                ],
-                '-1',
             ],
             [
                 new MonitoringEvent(['customValue' => 12]),

@@ -49,8 +49,9 @@ m6web_statsd_prometheus:
                                     name: 'metric_name3'
                         eventName4:
                             metrics:
-                                -   type: 'decrement'
+                                -   type: 'gauge'
                                     name: 'metric_name4'
+                                    param_value: 'myGauge'
                                     tags:
                                         tagE: ~
                         eventName5:
@@ -59,7 +60,7 @@ m6web_statsd_prometheus:
                                     name: 'metric_name5'               
 ```
 
-## Example 2: Sending an increment or decrement metric
+## Example 2: Sending an increment metric
 
 Configuration example:
 

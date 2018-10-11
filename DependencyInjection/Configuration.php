@@ -128,7 +128,7 @@ class Configuration implements ConfigurationInterface
                         ->cannotBeEmpty()
                         ->prototype('array')
                             ->children()
-                                ->enumNode('type')->isRequired()->values(['increment', 'decrement', 'counter', 'gauge', 'timer'])->end()
+                                ->enumNode('type')->isRequired()->values(['increment', 'counter', 'gauge', 'timer'])->end()
                                 ->scalarNode('name')->isRequired()->end()
                                 ->scalarNode('param_value')->cannotBeEmpty()->end()
                                 ->arrayNode('tags')

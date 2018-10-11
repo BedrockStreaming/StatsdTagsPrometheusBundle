@@ -23,6 +23,9 @@ build-ci: install test sf-security-checker
 # INSTALL
 install: clean-vendor clean-bin clean-composer composer-install
 
+#CODE STYLE
+quality: cs-ci
+
 # CLEAN for various directories used by Makefile.
 clean-vendor:
 	$(call printSection,CLEAN-VENDOR)
@@ -57,7 +60,7 @@ sf-security-checker:
 	php ${BIN_DIR}/security-checker security:check --ansi composer.lock
 
 # TEST
-test: phpunit
+test: quality phpunit
 
 phpunit:
 	$(call printSection,PHPUNIT)

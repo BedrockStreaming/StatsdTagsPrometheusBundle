@@ -10,9 +10,14 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Metric implements MetricInterface
 {
-    const TYPE_COUNTER = 'c';
-    const TYPE_GAUGE = 'g';
-    const TYPE_TIMER = 'ms';
+    const STATSD_TYPE_COUNTER = 'c';
+    const STATSD_TYPE_GAUGE = 'g';
+    const STATSD_TYPE_TIMER = 'ms';
+
+    const METRIC_TYPE_COUNTER = 'counter';
+    const METRIC_TYPE_GAUGE = 'gauge';
+    const METRIC_TYPE_INCREMENT = 'increment';
+    const METRIC_TYPE_TIMER = 'timer';
 
     /** @var PropertyAccess */
     protected $propertyAccessor;
@@ -88,14 +93,11 @@ class Metric implements MetricInterface
      */
     public function getResolvedValue(): string
     {
-        switch ($this->type) {
-            case 'increment':
-                return 1;
-            case 'decrement':
-                return -1;
+        if ($this->type === self::METRIC_TYPE_INCREMENT) {
+            return 1;
         }
         if (empty($this->paramValue)) {
-            // This is not allowed anymore for other types than increment and decrement
+            //The param value is required for every type, except for increment which is handled above.
             throw new MetricException(
                 \sprintf('The configuration of the event metric "%s" must define the "param_value" option.',
                     \get_class($this->event))
@@ -119,14 +121,13 @@ class Metric implements MetricInterface
     public function getResolvedType(): string
     {
         switch ($this->type) {
-            case 'counter':
-            case 'increment':
-            case 'decrement':
-                return self::TYPE_COUNTER;
-            case 'gauge':
-                return self::TYPE_GAUGE;
-            case 'timer':
-                return self::TYPE_TIMER;
+            case self::METRIC_TYPE_COUNTER:
+            case self::METRIC_TYPE_INCREMENT:
+                return self::STATSD_TYPE_COUNTER;
+            case self::METRIC_TYPE_GAUGE:
+                return self::STATSD_TYPE_GAUGE;
+            case self::METRIC_TYPE_TIMER:
+                return self::STATSD_TYPE_TIMER;
         }
 
         throw new MetricException('This metric type is not handled');
