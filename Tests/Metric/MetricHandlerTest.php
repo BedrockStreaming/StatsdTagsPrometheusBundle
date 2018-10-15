@@ -9,6 +9,11 @@ use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Tests\Fixtures\KernelForTest;
 
 class MetricHandlerTest extends TestCase
 {
@@ -24,12 +29,12 @@ class MetricHandlerTest extends TestCase
         ]);
         $expected = new \SplQueue();
         $expected->enqueue(
-            (new Metric(new MonitoringEvent(), [
+            new Metric(new MonitoringEvent(), [
                 'name' => 'myMetricName',
                 'type' => 'increment',
                 'configurationTags' => [],
                 'tags' => [],
-            ]))
+            ])
         );
         // -- When --
         $metricHandler->addMetricToQueue($metric);
@@ -211,12 +216,14 @@ class MetricHandlerTest extends TestCase
     /**
      * @dataProvider getDataEventsWithFormattedMetrics
      */
-    public function testGetFormattedMetricsReturnsExpected(
-        Event $event, array $metricConfig, string $expectedResult
-    ) {
+    public function testGetFormattedMetricsReturnsExpected(Event $event, Request $masterRequest, array $metricConfig, string $expectedResult)
+    {
         // -- Given --
         $metric = new Metric($event, $metricConfig);
         $metricHandler = $this->getMetricHandlerObject();
+        $requestStack = new RequestStack();
+        $requestStack->push($masterRequest);
+        $metricHandler->setRequestStack($requestStack);
         // -- Then --
         $this->assertSame($expectedResult, $metricHandler->getFormattedMetric($metric));
     }
@@ -252,10 +259,13 @@ class MetricHandlerTest extends TestCase
 
     public function getDataEventsWithFormattedMetrics()
     {
+        $defaultRequest = new Request([], ['country' => 'fr']);
+
         return [
             // Increment: object Event (no tags)
-            'test0' => [
-                'event' => (new Event()),
+            [
+                'event' => new Event(),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'http.status.200',
@@ -265,9 +275,40 @@ class MetricHandlerTest extends TestCase
                 // Only the metric, type and value are returned
                 'expectedResult' => 'http.status.200:1|c',
             ],
+            // Increment: object Event (computed configuration tag with unknown value)
+            [
+                'event' => new KernelEvent(new KernelForTest('test', false), new Request([], ['country' => 'be']), HttpKernelInterface::SUB_REQUEST),
+                'request' => $defaultRequest,
+                'eventConfig' => [
+                    'type' => 'increment',
+                    'name' => 'http.status.200',
+                    'configurationTags' => [
+                        'IamUnknown' => '@=request ? request.get("IamUnknown", "unknown") : "unknown"',
+                    ],
+                    'tags' => [],
+                ],
+                // Only the metric, type and value are returned
+                'expectedResult' => 'http.status.200:1|c|#IamUnknown:unknown',
+            ],
+            // Increment: object Event (computed configuration tag)
+            [
+                'event' => new KernelEvent(new KernelForTest('test', false), new Request([], ['country' => 'be']), HttpKernelInterface::SUB_REQUEST),
+                'request' => $defaultRequest,
+                'eventConfig' => [
+                    'type' => 'increment',
+                    'name' => 'http.status.200',
+                    'configurationTags' => [
+                        'country' => '@=request ? request.get("country", "unknown") : "unknown"',
+                    ],
+                    'tags' => [],
+                ],
+                // Only the metric, type and value are returned
+                'expectedResult' => 'http.status.200:1|c|#country:fr',
+            ],
             // Increment: object Event (With tags)
-            'test1' => [
-                'event' => (new Event()),
+            [
+                'event' => new Event(),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'http.status.200',
@@ -287,8 +328,9 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'http.status.200:1|c|#project:service-6play-users',
             ],
             // Increment: object MonitoringEvent (no tags)
-            'test2' => [
-                'event' => (new MonitoringEvent()),
+            [
+                'event' => new MonitoringEvent(),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'http.status.200',
@@ -298,14 +340,15 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'http.status.200:1|c',
             ],
             // Increment: object MonitoringEvent (With tags)
-            'test3' => [
-                'event' => (new MonitoringEvent([
+            [
+                'event' => new MonitoringEvent([
                     // This param return the metric value
                     'counterValue' => 124,
                     // Those metric tags values are specified when we send the event
                     'country' => 'France',
                     'platform' => 'm6web',
-                ])),
+                ]),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'counter',
                     'name' => 'http.status.200',
@@ -325,10 +368,11 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'http.status.200:124|c|#project:service-6play-users,country:France,platform:m6web',
             ],
             // Counter with custom param: object MonitoringEvent (no tags)
-            'test4' => [
-                'event' => (new MonitoringEvent([
+            [
+                'event' => new MonitoringEvent([
                     'getCustomParam' => 32546,
-                ])),
+                ]),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'counter',
                     'name' => 'specific_sql_query',
@@ -340,13 +384,14 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query:32546|c',
             ],
             // Counter with custom param: object MonitoringEvent (With tags)
-            'test5' => [
-                'event' => (new MonitoringEvent([
+            [
+                'event' => new MonitoringEvent([
                     'getCustomParam' => 12456,
                     'project' => 'service-6play-users',
                     'country' => 'France',
                     'platform' => 'm6web',
-                ])),
+                ]),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'counter',
                     'name' => 'specific_sql_query',
@@ -360,10 +405,11 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query:12456|c|#project:service-6play-users-cloud,country:France,platform:m6web',
             ],
             // Increment with dynamic metric name (no tags)
-            'test6' => [
-                'event' => (new MonitoringEvent([
+            [
+                'event' => new MonitoringEvent([
                     'myFirstPlaceHolder' => 'myPlaceHolderValue',
-                ])),
+                ]),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'specific_sql_query.<myFirstPlaceHolder>',
@@ -374,11 +420,12 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query.myPlaceHolderValue:1|c',
             ],
             // Increment with multiple dynamic metric name with multiple placeholders (With tags) => COMBO
-            'test7' => [
-                'event' => (new MonitoringEvent([
+            [
+                'event' => new MonitoringEvent([
                     'myFirstPlaceHolder' => 'firstPlaceHolderValue',
                     'mySecondPlaceHolder' => 'secondPlaceHolderValue',
-                ])),
+                ]),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'specific_sql_query.http',
@@ -396,8 +443,9 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query.http:1|c|#project:service-6play-users-cloud,myFirstPlaceHolder:firstPlaceHolderValue,mySecondPlaceHolder:secondPlaceHolderValue',
             ],
             // Counter with custom param: object CustomEvent (no tags) => Legacy compatibility
-            'test8' => [
-                'event' => (new CustomEventTest(12)),
+            [
+                'event' => new CustomEventTest(12),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'counter',
                     'name' => 'specific_sql_query',
@@ -409,8 +457,9 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query:12|c',
             ],
             // Counter with custom param: object Event (With tags)
-            'test9' => [
-                'event' => (new CustomEventTest(12)),
+            [
+                'event' => new CustomEventTest(12),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'counter',
                     'name' => 'specific_sql_query',
@@ -425,8 +474,9 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query:12|c|#project:service-6play-users-cloud',
             ],
             // Increment with dynamic metric name (no tags)
-            'test10' => [
-                'event' => (new CustomEventTest(12, 'placeHolder1Value')),
+            [
+                'event' => new CustomEventTest(12, 'placeHolder1Value'),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'specific_sql_query.<placeHolder1>',
@@ -437,8 +487,9 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query.placeHolder1Value:1|c',
             ],
             // Increment with multiple dynamic metric name with multiple placeholders (With tags) => COMBO
-            'test11' => [
-                'event' => (new CustomEventTest(null, 'placeHolder1Value', 'placeHolder2Value')),
+            [
+                'event' => new CustomEventTest(null, 'placeHolder1Value', 'placeHolder2Value'),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'specific_sql_query.<placeHolder1>.http.<placeHolder2>',
@@ -451,8 +502,9 @@ class MetricHandlerTest extends TestCase
                 'expectedResult' => 'specific_sql_query.placeHolder1Value.http.placeHolder2Value:1|c|#project:service-6play-users-cloud',
             ],
             // Increment with multiple tags sent with custom event (with property accessors)
-            'test12' => [
-                'event' => (new CustomEventTest(null, 'placeHolder1Value', 'placeHolder2Value')),
+            [
+                'event' => new CustomEventTest(null, 'placeHolder1Value', 'placeHolder2Value'),
+                'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
                     'name' => 'specific_sql_query_http',

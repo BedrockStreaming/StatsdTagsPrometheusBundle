@@ -215,7 +215,7 @@ class M6WebStatsdPrometheusExtension extends Extension
             // such as '@=container.get('kernel')'
             // See the documentation for further help
             ->addMethodCall('setContainer', [new Reference('service_container')])
-            ->addMethodCall('setCurrentRequest', [new Reference('request_stack')]);
+            ->addMethodCall('setRequestStack', [new Reference('request_stack')]);
     }
 
     protected function getMetricUdpClientDefinition(string $clientName, string $serverName): Definition
