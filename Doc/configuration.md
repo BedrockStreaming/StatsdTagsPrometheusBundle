@@ -316,7 +316,7 @@ If you don't need it, use the null value: `~`.
 
 2 services are injected into tag value resolution: 
 - `container` = container
-- `request` = current request. This is an alias for `container.get('request_stack').getCurrentRequest()`
+- `request` = master request. This is either from the handled event (if it is a KernelEvent) or an alias for `container.get('request_stack').getMasterRequest()`
 
 To activate those resolvers, you need to add: `@=` at the beggining of you tag value:
 ```yaml
@@ -338,7 +338,7 @@ Ten, you can use more complicated tests to check a value:
 #Logic operator
 tagName3: '@=request.get("X-Header") &&  not(request.get("X-Header-secondary")) ? "yes" : "no"'
 #Regex
-tagName3: '@=request.get("X-Header") matches "/def.*ult/" ? "yes" : "no"'
+tagName4: '@=request.get("X-Header") matches "/def.*ult/" ? "yes" : "no"'
 ```
 
 Please, have a look at the documentation syntax to go further in your usage: [ExpressionLanguage syntax](https://symfony.com/doc/current/components/expression_language/syntax.html).
