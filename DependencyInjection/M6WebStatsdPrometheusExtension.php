@@ -7,6 +7,7 @@ use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\DataCollector\StatsdDataCollector;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\ConsoleListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
+use M6Web\Bundle\StatsdPrometheusBundle\Listener\KernelEventsListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
@@ -14,9 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class M6WebStatsdPrometheusExtension extends Extension
+class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 {
     const CONFIG_ROOT_KEY = 'm6web_statsd_prometheus';
 
@@ -38,20 +39,12 @@ class M6WebStatsdPrometheusExtension extends Extension
     /** @var array */
     private $tags;
 
-    public function getConfiguration(array $config, ContainerBuilder $container)
-    {
-        return new Configuration(self::CONFIG_ROOT_KEY);
-    }
-
-    public function load(array $configs, ContainerBuilder $container): void
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         $this->container = $container;
 
-        $loader = (new Loader\YamlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources/config')));
+        $loader = new Loader\YamlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-
-        $configuration = $this->getConfiguration($configs, $this->container);
-        $config = $this->processConfiguration($configuration, $configs);
 
         $this->metricsPrefix = $config['metrics']['prefix'] ?? '';
         $this->servers = $config['servers'] ?? [];
@@ -67,6 +60,8 @@ class M6WebStatsdPrometheusExtension extends Extension
         }
 
         $this->registerConsoleEventListener();
+
+        $this->container->autowire(KernelEventsListener::class)->setAutoconfigured(true);
 
         if ($this->container->hasParameter('kernel.debug')
             && $this->container->getParameter('kernel.debug')) {
@@ -96,9 +91,8 @@ class M6WebStatsdPrometheusExtension extends Extension
      * @param array  $clientConfig Client config with servers config and groups config
      * @param array  $tagsConfig   Optional tags defined at the top level
      */
-    protected function setEventListenerAsServiceAndGetServiceId(
-        string $clientName, array $clientConfig, array $tagsConfig
-    ): string {
+    protected function setEventListenerAsServiceAndGetServiceId(string $clientName, array $clientConfig, array $tagsConfig): string
+    {
         $serviceId = $this->getServiceIdFrom($clientName);
 
         // Set the event listener service
@@ -132,9 +126,8 @@ class M6WebStatsdPrometheusExtension extends Extension
      * @param array      $groupConfig
      * @param array      $tagsConfig
      */
-    protected function addEventListenerTagsOnServiceDefinition(
-        Definition $eventListenerDefinition, array $groupConfig, array $tagsConfig
-    ): void {
+    protected function addEventListenerTagsOnServiceDefinition(Definition $eventListenerDefinition, array $groupConfig, array $tagsConfig): void
+    {
         // Define event listener on events
         foreach ($groupConfig as $eventsGroupName => $eventsGroupConfig) {
             foreach ($eventsGroupConfig['events'] as $eventName => $eventConfig) {

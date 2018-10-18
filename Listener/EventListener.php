@@ -2,9 +2,11 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Listener;
 
+use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\PropertyAccess;
 
 class EventListener
@@ -49,6 +51,15 @@ class EventListener
      */
     public function onKernelTerminate(PostResponseEvent $event): void
     {
+        $this->handleEvent(new MonitoringEvent([
+            'statusCode' => $event->getResponse()->getStatusCode(),
+            'routeName' => $event->getRequest()->get('_route', 'undefined'),
+            'methodName' => $event->getRequest()->getMethod(),
+            'timing' => microtime(true) - $event->getRequest()->server->get('REQUEST_TIME_FLOAT'),
+            'memory' => memory_get_peak_usage(true),
+            'host' => str_replace('.', '_', $event->getRequest()->getHost()),
+        ]), KernelEvents::TERMINATE);
+
         $this->metricHandler->sendMetrics();
     }
 
