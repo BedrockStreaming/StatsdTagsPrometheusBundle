@@ -153,9 +153,9 @@ class Metric implements MetricInterface
             // Recommended Event type
             if ($this->event instanceof MonitoringEventInterface) {
                 // If the event is a valid type, we can access custom Tags values
-                if ($this->event->hasParameter($tagName)) {
+                if ($this->event->hasParameter($tagAccessor)) {
                     // Add every metric "tag" parameters, configured in the event metric
-                    $tags[$tagName] = $this->event->getParameter($tagName);
+                    $tags[$tagName] = $this->event->getParameter($tagAccessor);
                 }
             } else {
                 // Legacy support
