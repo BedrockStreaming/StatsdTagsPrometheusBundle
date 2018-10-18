@@ -150,25 +150,24 @@ class Metric implements MetricInterface
         }
 
         foreach ($this->tags as $tagName => $tagAccessor) {
+            // Legacy support
+            // Try to get the tag value from a function in the event
+            try {
+                if ($tagAccessor === null) {
+                    // fallback in the case a tag accessor has not been defined
+                    //we try to access the value with the tag name
+                    $tagAccessor = $tagName;
+                }
+                $tags[$tagName] = $this->propertyAccessor->getValue($this->event, $tagAccessor);
+
+                continue;
+            } catch (\Exception $e) {
+            }
+
             // Recommended Event type
-            if ($this->event instanceof MonitoringEventInterface) {
-                // If the event is a valid type, we can access custom Tags values
-                if ($this->event->hasParameter($tagAccessor)) {
-                    // Add every metric "tag" parameters, configured in the event metric
-                    $tags[$tagName] = $this->event->getParameter($tagAccessor);
-                }
-            } else {
-                // Legacy support
-                // Try to get the tag value from a function in the event
-                try {
-                    if (is_null($tagAccessor)) {
-                        // fallback in the case a tag accessor has not been defined
-                        //we try to access the value with the tag name
-                        $tagAccessor = $tagName;
-                    }
-                    $tags[$tagName] = $this->propertyAccessor->getValue($this->event, $tagAccessor);
-                } catch (\Exception $e) {
-                }
+            if ($this->event instanceof MonitoringEventInterface && $this->event->hasParameter($tagAccessor)) {
+                // Add every metric "tag" parameters, configured in the event metric
+                $tags[$tagName] = $this->event->getParameter($tagAccessor);
             }
         }
 
