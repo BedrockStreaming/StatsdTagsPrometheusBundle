@@ -5,31 +5,27 @@ declare(strict_types=1);
 namespace M6Web\Bundle\StatsdPrometheusBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 
 /**
- * evenement surchargeant le kernel.exception de sf2
+ * Decorates kernel.exception event with monitoring data
  */
 class KernelExceptionEvent extends Event
 {
-    private $code;
+    /** @var GetResponseForExceptionEvent */
+    private $event;
 
-    /**
-     * constructeur
-     *
-     * @param int $code code
-     */
-    public function __construct($code)
+    public function __construct(GetResponseForExceptionEvent $event)
     {
-        $this->code = $code;
+        $this->event = $event;
     }
 
-    /**
-     * retourne le statuscode
-     *
-     * @return int
-     */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
-        return $this->code;
+        if (method_exists($this->event->getException(), 'getStatusCode')) {
+            return $this->event->getException()->getStatusCode();
+        }
+
+        return 500;
     }
 }

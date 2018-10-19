@@ -10,7 +10,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class KernelEventsListener implements EventSubscriberInterface
@@ -23,31 +22,19 @@ class KernelEventsListener implements EventSubscriberInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public function onKernelTerminate(PostResponseEvent $event)
+    public function onKernelTerminate(PostResponseEvent $event): void
     {
-        $this->dispatcher->dispatch('statsdtagsprometheus.kernelterminate',
-            new KernelTerminateEvent(
-                $event->getKernel(),
-                $event->getRequest(),
-                $event->getResponse()
-            ));
+        $this->dispatcher->dispatch('statsdtagsprometheus.kernelterminate', new KernelTerminateEvent($event));
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(GetResponseForExceptionEvent $event): void
     {
-        if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
-            return;
-        }
-
-        if (method_exists($event->getException(), 'getStatusCode')) {
-            $this->dispatcher->dispatch(
-                'statsdtagsprometheus.kernelexception',
-                new KernelExceptionEvent($event->getException()->getStatusCode())
-            );
+        if ($event->isMasterRequest()) {
+            $this->dispatcher->dispatch('statsdtagsprometheus.kernelexception', new KernelExceptionEvent($event));
         }
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
