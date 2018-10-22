@@ -1,5 +1,21 @@
 # Usage
 
+## Built-in events
+
+### 1. `statsdtagsprometheus.kernelterminate`
+
+This event decorates the `kernel.terminate` event and add useful monitoring metrics on top:
+- StatusCode (200/404/5xx/...)
+- RouteName (from symfony routing)
+- MethodName (GET/POST/...)
+- Timing (time elapsed since php started exection of the request)
+- Memory (maximum memory allocated)
+- Host (http host requested by the browser)
+
+### 2. `statsdtagsprometheus.kernelexception`
+
+This event is provided for backward compatibility for your apps that used to use our `m6web/http-kernel-bundle` bundle. It provides the http response code sent.
+
 ## Dispatch your events
 
 ### Using MonitoringEventInterface
