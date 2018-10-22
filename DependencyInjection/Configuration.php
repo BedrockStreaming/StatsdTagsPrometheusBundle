@@ -8,20 +8,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @var string
-     */
-    private $configurationRootKey;
-
-    public function __construct(string $configurationRootKey)
-    {
-        $this->configurationRootKey = $configurationRootKey;
-    }
-
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root($this->configurationRootKey);
+        $rootNode = $treeBuilder->root(M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY);
 
         $this->addMetricsSection($rootNode);
         $this->addServersSection($rootNode);
