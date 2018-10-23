@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Listener;
 
-use M6Web\Bundle\StatsdPrometheusBundle\Event\KernelExceptionEvent;
-use M6Web\Bundle\StatsdPrometheusBundle\Event\KernelTerminateEvent;
+use M6Web\Bundle\StatsdPrometheusBundle\Event\KernelMonitoringEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -24,13 +23,19 @@ class KernelEventsListener implements EventSubscriberInterface
 
     public function onKernelTerminate(PostResponseEvent $event): void
     {
-        $this->dispatcher->dispatch('statsdtagsprometheus.kernelterminate', new KernelTerminateEvent($event));
+        $this->dispatcher->dispatch(
+            KernelMonitoringEvent::TERMINATE,
+            KernelMonitoringEvent::createFromKernelTerminateEvent($event)
+        );
     }
 
     public function onKernelException(GetResponseForExceptionEvent $event): void
     {
         if ($event->isMasterRequest()) {
-            $this->dispatcher->dispatch('statsdtagsprometheus.kernelexception', new KernelExceptionEvent($event));
+            $this->dispatcher->dispatch(
+                KernelMonitoringEvent::EXCEPTION,
+                KernelMonitoringEvent::createFromKernelExceptionEvent($event)
+            );
         }
     }
 

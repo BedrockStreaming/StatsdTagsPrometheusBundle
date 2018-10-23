@@ -156,12 +156,21 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
                     ]);
             }
         }
-        // Define event listener on kernel terminate
-        $eventListenerDefinition->addTag('kernel.event_listener', [
-            'event' => 'kernel.terminate',
-            'method' => 'onKernelTerminate',
-            'priority' => -100,
-        ]);
+
+        $eventListenerDefinition
+            // Define event listener on kernel terminate
+            ->addTag('kernel.event_listener', [
+                'event' => 'kernel.terminate',
+                'method' => 'onKernelTerminate',
+                'priority' => -100,
+            ])
+            // Define event listener on console terminate
+            ->addTag(
+                'kernel.event_listener', [
+                'event' => 'console.terminate',
+                'method' => 'onConsoleTerminate',
+                'priority' => -100,
+            ]);
     }
 
     protected function loadDebugConfiguration(): void
@@ -238,7 +247,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
     protected function registerConsoleEventListener(): void
     {
         $this->container
-            ->register('m6.listener.statsd.console', ConsoleListener::class)
+            ->register('m6.listener.statsd_prometheus.console', ConsoleListener::class)
             ->addTag(
                 'kernel.event_listener',
                 ['event' => 'console.command', 'method' => 'onCommand']
