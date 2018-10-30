@@ -4,6 +4,7 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Listener;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\PropertyAccess;
 
@@ -44,10 +45,12 @@ class EventListener
         $this->metricHandler->tryToSendMetrics();
     }
 
-    /**
-     * method called on the kernel.terminate event
-     */
     public function onKernelTerminate(PostResponseEvent $event): void
+    {
+        $this->metricHandler->sendMetrics();
+    }
+
+    public function onConsoleTerminate(ConsoleTerminateEvent $event): void
     {
         $this->metricHandler->sendMetrics();
     }

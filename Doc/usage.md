@@ -2,19 +2,46 @@
 
 ## Built-in events
 
-### 1. `statsdtagsprometheus.kernelterminate`
+### 1. Kernel Events
+
+#### `statsdprometheus.kernel.terminate`
 
 This event decorates the `kernel.terminate` event and add useful monitoring metrics on top:
-- StatusCode (200/404/5xx/...)
-- RouteName (from symfony routing)
-- MethodName (GET/POST/...)
-- Timing (time elapsed since php started exection of the request)
-- Memory (maximum memory allocated)
-- Host (http host requested by the browser)
+- host (http host requested by the browser)
+- method (GET/POST/...)
+- memory (maximum memory allocated)
+- route (from symfony routing)
+- status (200/404/5xx/...)
+- timing (time elapsed since php started exection of the request)
 
-### 2. `statsdtagsprometheus.kernelexception`
+#### `statsdprometheus.kernel.exception`
 
 This event is provided for backward compatibility for your apps that used to use our `m6web/http-kernel-bundle` bundle. It provides the http response code sent.
+
+### 2. Console events
+
+#### `statsdprometheus.console.terminate`
+
+This event decorates the `console.terminate` event and adds the following data:
+
+
+- startTime: The command starting time
+- executionTime: The execution time in microseconds
+- executionTimeHumanReadable: Execution time, in seconds
+- peakMemory: The peak memory usage
+- underscoredCommandName: the formatted name of the current command
+            
+#### `statsdprometheus.console.command`
+
+This sends the same values than `statsdprometheus.console.terminate`;
+
+#### `statsdprometheus.console.error`
+
+This sends the same values than `statsdprometheus.console.terminate`;
+
+#### `statsdprometheus.console.exception`
+
+This sends the same values than `statsdprometheus.console.terminate`;
 
 ## Dispatch your events
 

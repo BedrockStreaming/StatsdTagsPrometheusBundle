@@ -460,31 +460,31 @@ m6web_statsd_prometheus:
             groups:
                 default_group:
                     events:
-                        statsdtagsprometheus.kernelterminate:
+                        statsdprometheus.kernel.terminate:
                             metrics:
                                 -   type: 'increment'
                                     #project name and dynamics values are removed here for the metric name
                                     #we also provide a better name according to the naming convention
                                     name: 'http_request_total' 
                                     tags: #dynamic values are set in tags
-                                        host: 'host'
-                                        status: 'statusCode'
+                                        host: ~
+                                        status: ~
                                 -   type: 'timer'
                                     #project name and dynamics values are removed here for the metric name
                                     #we also provide a better name according to the naming convention
                                     name: 'http_request_input_seconds' 
                                     param_value: 'getTiming'
                                     tags: #dynamic values are set in tags
-                                        route: 'routeName'
-                                        host: 'host'
-                                        status: 'statusCode'
-                        statsdtagsprometheus.kernelexception:
+                                        route: ~
+                                        host: ~
+                                        status: ~
+                        statsdprometheus.kernel.exception:
                             metrics:
                                 -   type: 'increment'                                                                    
                                     #we provide a better name according to the naming convention
                                     name: 'http_error_count' 
                                     tags:
-                                        code: 'statusCode'
+                                        status: ~
                         redis.command:
                             metrics:
                                 -   type: 'increment'
