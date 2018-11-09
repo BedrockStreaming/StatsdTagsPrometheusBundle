@@ -13,6 +13,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root(M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY);
 
+        $this->addEnabledSection($rootNode);
         $this->addMetricsSection($rootNode);
         $this->addServersSection($rootNode);
         $this->addClientsSection($rootNode);
@@ -20,6 +21,14 @@ class Configuration implements ConfigurationInterface
         $this->addDefaultEventSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    private function addEnabledSection(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->booleanNode('enabled')->defaultTrue()->end()
+            ->end();
     }
 
     private function addMetricsSection(ArrayNodeDefinition $rootNode): void

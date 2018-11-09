@@ -21,6 +21,9 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 {
     const CONFIG_ROOT_KEY = 'm6web_statsd_prometheus';
 
+    /** @var bool */
+    private $enabled;
+
     /** @var ContainerBuilder */
     private $container;
 
@@ -46,10 +49,17 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
         $loader = new Loader\YamlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
+        $this->enabled = $config['enabled'] ?? false;
         $this->metricsPrefix = $config['metrics']['prefix'] ?? '';
         $this->servers = $config['servers'] ?? [];
         $this->clients = $config['clients'] ?? [];
         $this->tags = $config['tags'] ?? [];
+
+        if (!$this->isEnabled()) {
+            //If the bundle is disabled, we don't load the client configuration
+
+            return;
+        }
 
         foreach ($this->clients as $alias => $clientConfig) {
             $this->clientServiceIds[] = $this->setEventListenerAsServiceAndGetServiceId(
@@ -82,6 +92,11 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
     public function getAlias(): string
     {
         return self::CONFIG_ROOT_KEY;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
     }
 
     /**

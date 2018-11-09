@@ -95,6 +95,17 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         $this->extension->load([$config[M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY]], $this->container);
     }
 
+    /**
+     * @dataProvider dataProviderForIsEnabledReturnsExpectation
+     */
+    public function testIsEnabledReturnsExpectation(array $config, bool $expected)
+    {
+        // -- When --
+        $this->extension->load([$config], $this->container);
+        // -- Then --
+        $this->assertEquals($expected, $this->extension->isEnabled());
+    }
+
     public function dataProviderForGetServersReturnsExpectation(): array
     {
         return [
@@ -264,6 +275,16 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
                     ],
                 ],
             ],
+        ];
+    }
+
+    public function dataProviderForIsEnabledReturnsExpectation(): array
+    {
+        return [
+            //Default config: empty means "enabled"
+            [[], true],
+            [['enabled' => true], true],
+            [['enabled' => false], false],
         ];
     }
 

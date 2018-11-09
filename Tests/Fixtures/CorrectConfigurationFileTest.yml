@@ -1,5 +1,10 @@
 m6web_statsd_prometheus:
 
+    enabled: true
+
+    metrics:
+        prefix: 'test_'
+
     servers:
         default:
             address: 'udp://%statsd.address%'
