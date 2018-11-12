@@ -1,6 +1,23 @@
-# Configuration
+Configuration
+======
 
-## 1. Configure the servers
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Configure the servers](#configure-the-servers)
+- [Configure the clients](#configure-the-clients)
+- [Configure the groups](#configure-the-groups)
+- [Configure the events](#configure-the-events)
+- [Configure the metrics](#configure-the-metrics)
+- [Configure the tags](#configure-the-tags)
+- [Compatibility and legacy behaviour](#compatibility-and-legacy-behaviour)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+Configure the servers
+------
 
 ### Description
 
@@ -34,7 +51,8 @@ Address to the UDP server, containing the protocol.
 
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
-## 2. Configure the clients
+Configure the clients
+------
 
 ### Description
 
@@ -82,13 +100,14 @@ There is no limit by default.
 
 * `groups` : array
 
-See [3. Configure the groups](#3-configure-the-groups).
+See  Configure the groups](#3-configure-the-groups).
 
 
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
 
-## 3. Configure the groups
+Configure the groups
+------
 
 ### Description
 
@@ -124,12 +143,13 @@ You can name the group key in camelCase or snake_case.
 
 * `events` : array
 
-See [4. Configure the events](#4-configure-the-events).
+See  Configure the events](#4-configure-the-events).
 
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
 
-## 4. Configure the events
+Configure the events
+------
 
 ### Description
 
@@ -178,11 +198,12 @@ to the UDP server directly without waiting for the kernel terminate event.
 
 * `metrics`: array
 
-See [5. Configure the metrics](#5-configure-the-metrics).
+See  Configure the metrics](#5-configure-the-metrics).
 
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
-## 5. Configure the metrics
+Configure the metrics
+------
 
 ### Global prefix
 
@@ -246,12 +267,13 @@ This option is __required__ for gauge, counter, and timer types only.
 
 * `tags` : array
 
-See [6. Configure the tags](#6-configure-the-tags)
+See  Configure the tags](#6-configure-the-tags)
  
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
  
-## 6. Configure the tags
+Configure the tags
+------
 
 ### Tags scopes
 
@@ -357,7 +379,7 @@ Otherwise, it will check if there is a public accessor associated to your tag na
 
 This works like the former placeholders. 
 
-See [Usage documentation](usage.md) for further explanations. 
+See [Usage documentation](usage-and-examples.md) for further explanations. 
 
 
 ### Tag priority and overriding
@@ -415,7 +437,8 @@ You will need to reboot the statsd_exporter server in order to take into account
  
 > :information_source: For further help, have a look at the [Examples](examples.md) section.
 
-## 7. Compatibility and legacy behaviour
+Compatibility and legacy behaviour
+------
 
 ### Modify your configuration format
 
