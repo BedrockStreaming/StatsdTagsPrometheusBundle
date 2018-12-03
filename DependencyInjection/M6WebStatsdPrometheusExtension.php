@@ -178,7 +178,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
         $definition = new Definition(StatsdDataCollector::class);
         $definition->setPublic(true);
         $definition->addTag('data_collector', [
-            'template' => '@M6WebStatsd/Collector/statsd.html.twig',
+            'template' => '@M6WebStatsdPrometheus/Collector/statsd_prometheus.html.twig',
             'id' => 'statsd',
         ]);
 
