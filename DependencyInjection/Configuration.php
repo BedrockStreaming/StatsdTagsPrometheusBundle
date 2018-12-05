@@ -10,8 +10,8 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY);
+        $treeBuilder = new TreeBuilder(M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY);
+        $rootNode = $this->getRootNode($treeBuilder, M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY);
 
         $this->addMetricsSection($rootNode);
         $this->addServersSection($rootNode);
@@ -107,8 +107,10 @@ class Configuration implements ConfigurationInterface
 
     private function getClientsGroupsEvents()
     {
-        return (new TreeBuilder())
-            ->root('events')
+        $treeBuilder = new TreeBuilder('events');
+        $eventsNode = $this->getRootNode($treeBuilder, 'events');
+
+        $eventsNode
             ->cannotBeEmpty()
             ->useAttributeAsKey('eventName')
             ->prototype('array')
@@ -130,5 +132,17 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+
+        return $eventsNode;
+    }
+
+    private function getRootNode(TreeBuilder $treeBuilder, $name)
+    {
+        // BC layer for symfony/config 4.1 and older
+        if (!\method_exists($treeBuilder, 'getRootNode')) {
+            return $treeBuilder->root($name);
+        }
+
+        return $treeBuilder->getRootNode();
     }
 }
