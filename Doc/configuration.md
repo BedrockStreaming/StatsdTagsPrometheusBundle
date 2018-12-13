@@ -49,7 +49,7 @@ Address to the UDP server, containing the protocol.
 
 * `port`: int
 
-> :information_source: For further help, have a look at the [Examples](examples.md) section.
+> :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
 
 Configure the clients
 ------
@@ -103,7 +103,7 @@ There is no limit by default.
 See  Configure the groups](#3-configure-the-groups).
 
 
-> :information_source: For further help, have a look at the [Examples](examples.md) section.
+> :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
 
 
 Configure the groups
@@ -145,7 +145,7 @@ You can name the group key in camelCase or snake_case.
 
 See  Configure the events](#4-configure-the-events).
 
-> :information_source: For further help, have a look at the [Examples](examples.md) section.
+> :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
 
 
 Configure the events
@@ -200,7 +200,7 @@ to the UDP server directly without waiting for the kernel terminate event.
 
 See  Configure the metrics](#5-configure-the-metrics).
 
-> :information_source: For further help, have a look at the [Examples](examples.md) section.
+> :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
 
 Configure the metrics
 ------
@@ -269,7 +269,7 @@ This option is __required__ for gauge, counter, and timer types only.
 
 See  Configure the tags](#6-configure-the-tags)
  
-> :information_source: For further help, have a look at the [Examples](examples.md) section.
+> :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
 
  
 Configure the tags
@@ -435,7 +435,7 @@ Once you've sent a metric, if you change its configuration, changes will be igno
 You will need to reboot the statsd_exporter server in order to take into account the new changes.
 
  
-> :information_source: For further help, have a look at the [Examples](examples.md) section.
+> :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
 
 Compatibility and legacy behaviour
 ------
@@ -533,6 +533,6 @@ m6web_statsd_prometheus:
                                         status: 'response.statusCode'
 ```
 
-> :information_source: For further help, have a look at the [Examples](examples.md) section.
+> :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
 
 [Go back](../README.md)
