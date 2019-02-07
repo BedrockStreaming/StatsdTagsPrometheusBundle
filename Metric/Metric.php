@@ -6,7 +6,6 @@ use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEventInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Metric implements MetricInterface
@@ -140,34 +139,28 @@ class Metric implements MetricInterface
 
         // Add global parameters (configured in client or group)
         if (is_array($this->configurationTags)) {
-            if ($this->event instanceof KernelEvent && $this->event->isMasterRequest()) {
-                $resolvers['request'] = $this->event->getRequest();
-            }
-
             foreach ($this->configurationTags as $tagKey => $tagValue) {
                 $tags[$tagKey] = $this->resolveTagValue($tagValue, $resolvers);
             }
         }
 
         foreach ($this->tags as $tagName => $tagAccessor) {
-            // Legacy support
-            // Try to get the tag value from a function in the event
-            try {
-                if ($tagAccessor === null) {
-                    // fallback in the case a tag accessor has not been defined
-                    //we try to access the value with the tag name
-                    $tagAccessor = $tagName;
-                }
-                $tags[$tagName] = $this->propertyAccessor->getValue($this->event, $tagAccessor);
-
-                continue;
-            } catch (\Exception $e) {
+            if ($tagAccessor === null) {
+                // fallback in the case a tag accessor has not been defined
+                //we try to access the value with the tag name
+                $tagAccessor = $tagName;
             }
-
             // Recommended Event type
             if ($this->event instanceof MonitoringEventInterface && $this->event->hasParameter($tagAccessor)) {
                 // Add every metric "tag" parameters, configured in the event metric
                 $tags[$tagName] = $this->event->getParameter($tagAccessor);
+            } else {
+                // Legacy support
+                // Try to get the tag value from a function in the event
+                try {
+                    $tags[$tagName] = $this->propertyAccessor->getValue($this->event, $tagAccessor);
+                } catch (\Exception $e) {
+                }
             }
         }
 
