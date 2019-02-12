@@ -223,7 +223,7 @@ class MetricHandlerTest extends TestCase
         $metricHandler = $this->getMetricHandlerObject();
         $requestStack = new RequestStack();
         $requestStack->push($masterRequest);
-        $metricHandler->setRequestStack($requestStack);
+        $metricHandler->setMasterRequestFromRequestStack($requestStack);
         // -- Then --
         $this->assertSame($expectedResult, $metricHandler->getFormattedMetric($metric));
     }

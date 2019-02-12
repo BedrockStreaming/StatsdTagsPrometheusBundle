@@ -63,8 +63,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 
         $this->container->autowire(KernelEventsListener::class)->setAutoconfigured(true);
 
-        if ($this->container->hasParameter('kernel.debug')
-            && $this->container->getParameter('kernel.debug')) {
+        if ($this->isDebugEnabled()) {
             $this->loadDebugConfiguration();
         }
     }
@@ -217,13 +216,14 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
             // such as '@=container.get('kernel')'
             // See the documentation for further help
             ->addMethodCall('setContainer', [new Reference('service_container')])
-            ->addMethodCall('setRequestStack', [new Reference('request_stack')]);
+            ->addMethodCall('setMasterRequestFromRequestStack', [new Reference('request_stack')]);
     }
 
     protected function getMetricUdpClientDefinition(string $clientName, string $serverName): Definition
     {
         return new Definition(UdpClient::class, [
             $this->getClientServerDefinition($clientName, $serverName),
+            $this->isDebugEnabled(),
         ]);
     }
 
@@ -261,5 +261,11 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
                 ['event' => 'console.terminate', 'method' => 'onTerminate']
             )
             ->addMethodCall('setEventDispatcher', [new Reference('event_dispatcher')]);
+    }
+
+    protected function isDebugEnabled()
+    {
+        return $this->container->hasParameter('kernel.debug')
+            && $this->container->getParameter('kernel.debug');
     }
 }

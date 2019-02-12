@@ -10,9 +10,13 @@ class UdpClient implements ClientInterface
     /** @var ServerInterface */
     protected $server;
 
-    public function __construct(ServerInterface $server)
+    /** @var bool */
+    protected $debugEnabled;
+
+    public function __construct(ServerInterface $server, ?bool $debugEnabled = false)
     {
         $this->server = $server;
+        $this->debugEnabled = $debugEnabled;
     }
 
     /**
@@ -37,7 +41,7 @@ class UdpClient implements ClientInterface
                     continue;
                 }
 
-                if (!@fwrite($resource, $line)) {
+                if (!@fwrite($resource, $this->getFormattedLine($line))) {
                     return false;
                 }
             }
@@ -48,5 +52,15 @@ class UdpClient implements ClientInterface
         }
 
         return false;
+    }
+
+    protected function getFormattedLine($line)
+    {
+        if ($this->debugEnabled) {
+            //With debug mode on, we add a carriage return to provide more readable data
+            return $line."\n";
+        }
+
+        return $line;
     }
 }
