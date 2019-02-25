@@ -170,8 +170,8 @@ m6web_statsd_prometheus:
             address: 'udp://localhost'
             port: 1236
     tags:
-        tagA: 'tagValue1'
-        tagB: 'tagValue2'
+        tagA: 'tagValue1' # static value
+        tagB: 'tagValue2' # static value
     clients: #clients
         default:
             max_queued_metrics: 10000 #optional
@@ -179,8 +179,8 @@ m6web_statsd_prometheus:
             groups: #groups
                 groupA:
                     tags:
-                        tagC: 'tagValue3'
-                        tagD: 'tagValue4'
+                        tagC: 'tagValue3' #static value
+                        tagD: 'tagValue4' #static value
                     events: #events types
                         eventName1:
                             metrics:
@@ -188,8 +188,8 @@ m6web_statsd_prometheus:
                                     name: 'metric_name'
                                     param_value: 'counterValue'
                                     tags:
-                                        tagE: ~
-                                        tagF: ~
+                                        tagE: ~ # event's parameter "tagE"
+                                        tagF: ~ # event's parameter "tagF"
                         eventName2:
                             flush_metrics_queue: true
                             metrics:
@@ -213,7 +213,7 @@ m6web_statsd_prometheus:
                                     name: 'metric_name4'
                                     param_value: 'myGauge'
                                     tags:
-                                        tagE: ~
+                                        tagE: ~ # event's parameter "tagE"
                         eventName5:
                             metrics:
                                 -   type: 'timer'
