@@ -278,9 +278,9 @@ Configure the tags
 ### Tags scopes
 
 There are 3 types of tag that you can use: 
-* __global tag__: it is sent with every event metric. Its value is set in the config file.
-* __group tag__: it is sent with every event metric of the same group. Its value is set in the config file.
-* __metric tag__: it is sent only for the current event metric. Its value is sent with the event.  
+* __global tag__: it is sent with every event metric.
+* __group tag__: it is sent with every event metric of the same group.
+* __metric tag__: it is sent only for the current event metric.  
 
 Here is an example of how to define those 3 types:
 
@@ -323,16 +323,18 @@ m6web_statsd_prometheus:
 
 ### Tag option / structure
 
-* `{key}` = tag name
-
 The key corresponds to the tag name that will be sent to Prometheus.
 
-* `{value}` = property accessor
+* `{key}` = tag name
 
-You can define, as a value, a property acessor that will return the tag value.
-This is used for legacy purposes, when you work with specific event classes.
+The value can have different meanings.
 
-If you don't need it, use the null value: `~`.
+* `{value}` = some value
+   * Starting with `@=`, it will use a tag resolver, see [below](#tag-resolvers).
+   * Starting with `->`, it will try to resolve the followed attribute, see [below](#tag-properties)
+   * Starting with `%=`, it will try to get this parameter if the event implements the `MonitoringEventInterface`.
+   * A static value can also be used.
+   * A null value (or `~`) will try to resolve the `key` like it was a parameter (`%=key`).
 
 ### Tag resolvers
 
@@ -340,7 +342,6 @@ If you don't need it, use the null value: `~`.
 - `container` = container
 - `request` = master request. This is either from the handled event (if it is a KernelEvent) or an alias for `container.get('request_stack').getMasterRequest()`
 
-To activate those resolvers, you need to add: `@=` at the beggining of you tag value:
 ```yaml
 tagName: '@=request.get("X-Header")'
 ```
@@ -367,19 +368,18 @@ Please, have a look at the documentation syntax to go further in your usage: [Ex
 
 :warning: This works only for global and group configuration tags.
 
-### Send tags with event metrics
-
-When you set a tag in a metric, the bundle will look for an associated value to return.
-
-If you use the new format, it will look for a parameter named after your tag.
-
-A compatibility fallback will automatically look into your event object.
-First, if you have defined a property accessor, it will get the tag value there.
-Otherwise, it will check if there is a public accessor associated to your tag name. 
-
-This works like the former placeholders. 
-
 See [Usage documentation](usage-and-examples.md) for further explanations. 
+
+### Tag properties
+
+You can use the [Symfony property accessor](https://symfony.com/doc/current/components/property_access.html) to get values from your event.
+
+```yaml
+tagName: `->propertyName`
+```
+
+This will try to get the value of you event's public attribute `propertyName` or try to access it with a getter (`getPropertyName`).
+See the Symfony documentation for more information.
 
 
 ### Tag priority and overriding

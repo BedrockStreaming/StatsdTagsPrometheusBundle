@@ -514,8 +514,8 @@ class MetricHandlerTest extends TestCase
                     'tags' => [
                         'country' => null,
                         'platform' => null,
-                        'placeHolder1' => null,
-                        'normalized_tags_name' => 'placeHolder2',
+                        'placeHolder1' => '->placeHolder1',
+                        'normalized_tags_name' => '->placeHolder2',
                     ],
                 ],
                 // We are supposed to get the metric name, type, the custom parameter value and all the tags

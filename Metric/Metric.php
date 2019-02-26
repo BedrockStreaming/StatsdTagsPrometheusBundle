@@ -19,6 +19,10 @@ class Metric implements MetricInterface
     const METRIC_TYPE_INCREMENT = 'increment';
     const METRIC_TYPE_TIMER = 'timer';
 
+    const TAG_SERVICE_RESOLUTION = '@=';
+    const TAG_PROPERTY_ACCESSOR = '->';
+    const TAG_PARAMETER_KEY = '%=';
+
     /** @var PropertyAccess */
     protected $propertyAccessor;
 
@@ -35,7 +39,7 @@ class Metric implements MetricInterface
     private $paramValue;
 
     /** @var array */
-    private $configurationTags;
+    private $configurationTags = [];
 
     /** @var array */
     private $tags;
@@ -135,36 +139,22 @@ class Metric implements MetricInterface
 
     public function getResolvedTags(array $resolvers = []): array
     {
-        $tags = [];
+        $resolvedTags = [];
 
         // Add global parameters (configured in client or group)
-        if (is_array($this->configurationTags)) {
-            foreach ($this->configurationTags as $tagKey => $tagValue) {
-                $tags[$tagKey] = $this->resolveTagValue($tagValue, $resolvers);
+        foreach (array_merge($this->configurationTags, $this->tags) as $tagName => $tagValue) {
+            $resolvedTag = $this->resolveTagValue(
+                // By default (~), we look for the parameter with the same name as the tag.
+                !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY.$tagName,
+                $resolvers
+            );
+
+            if (!empty($resolvedTag)) {
+                $resolvedTags[$tagName] = $resolvedTag;
             }
         }
 
-        foreach ($this->tags as $tagName => $tagAccessor) {
-            if ($tagAccessor === null) {
-                // fallback in the case a tag accessor has not been defined
-                //we try to access the value with the tag name
-                $tagAccessor = $tagName;
-            }
-            // Recommended Event type
-            if ($this->event instanceof MonitoringEventInterface && $this->event->hasParameter($tagAccessor)) {
-                // Add every metric "tag" parameters, configured in the event metric
-                $tags[$tagName] = $this->event->getParameter($tagAccessor);
-            } else {
-                // Legacy support
-                // Try to get the tag value from a function in the event
-                try {
-                    $tags[$tagName] = $this->propertyAccessor->getValue($this->event, $tagAccessor);
-                } catch (\Exception $e) {
-                }
-            }
-        }
-
-        return $tags;
+        return $resolvedTags;
     }
 
     private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders)
@@ -183,15 +173,29 @@ class Metric implements MetricInterface
         return $metricName;
     }
 
-    private function resolveTagValue(string $valueToResolve, array $resolvers): string
+    private function resolveTagValue(string $valueToResolve, array $resolvers): ?string
     {
-        if (strpos($valueToResolve, '@=') === 0) {
-            // Service resolution
-            $resolvedValue = $this->expressionLanguage->evaluate(substr($valueToResolve, 2), $resolvers);
-        } else {
-            $resolvedValue = $valueToResolve;
-        }
+        switch (true) {
+            case strpos($valueToResolve, self::TAG_SERVICE_RESOLUTION) === 0:
+                return $this->expressionLanguage->evaluate(substr($valueToResolve, strlen(self::TAG_SERVICE_RESOLUTION)), $resolvers);
+            case strpos($valueToResolve, self::TAG_PROPERTY_ACCESSOR) === 0:
+                try {
+                    return $this->propertyAccessor->getValue($this->event, substr($valueToResolve, strlen(self::TAG_PROPERTY_ACCESSOR)));
+                } catch (\Exception $e) {
+                    return null;
+                }
+            case strpos($valueToResolve, self::TAG_PARAMETER_KEY) === 0:
+                $parameter = substr($valueToResolve, strlen(self::TAG_PARAMETER_KEY));
+                if (!$this->event instanceof MonitoringEventInterface) {
+                    return null;
+                }
+                if (!$this->event->hasParameter($parameter)) {
+                    return null;
+                }
 
-        return $resolvedValue;
+                return $this->event->getParameter($parameter);
+            default:
+                return $valueToResolve;
+        }
     }
 }
