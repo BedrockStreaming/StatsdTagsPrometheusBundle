@@ -73,4 +73,9 @@ class EventListener
     {
         return $this->metricHandler;
     }
+
+    public function setMaxNumberOfMetricToQueue($maxNumberOfMetricToQueue): void
+    {
+        $this->metricHandler->setMaxNumberOfMetricToQueue($maxNumberOfMetricToQueue);
+    }
 }
