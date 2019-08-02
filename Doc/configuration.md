@@ -523,14 +523,14 @@ m6web_statsd_prometheus:
                                     #this parameter will match with the public function set in the sent event
                                     param_value: 'getTiming' 
                                     tags:
-                                        clientId: ~
+                                        clientId: '->clientId'
                                                                         
                                 -   type: 'increment'                                    
                                     #we provide a better name according to the naming convention
                                     name: 'guzzlehttp_total'  
                                     tags:
-                                        clientId: ~
-                                        status: 'response.statusCode'
+                                        clientId: '->clientId'
+                                        status: '->response.statusCode'
 ```
 
 > :information_source: For further help, have a look at the [Examples](usage-and-examples.md) section.
