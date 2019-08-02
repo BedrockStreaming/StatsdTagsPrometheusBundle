@@ -515,19 +515,13 @@ m6web_statsd_prometheus:
                                     name: 'cache_redis_composant_total'
                                     tags:
                                         command: ~
-                        m6web.guzzlehttp:
+                        !php/const:M6Web\Bundle\GuzzleHttpBundle\EventDispatcher\GuzzleHttpEvent::EVENT_NAME:
                             metrics:
                                 -   type: 'timer'
                                     #we provide a better name according to the naming convention
-                                    name: 'guzzlehttp_seconds'
+                                    name: 'http_guzzle_request_output_seconds'
                                     #this parameter will match with the public function set in the sent event
                                     param_value: 'getTiming' 
-                                    tags:
-                                        clientId: '->clientId'
-                                                                        
-                                -   type: 'increment'                                    
-                                    #we provide a better name according to the naming convention
-                                    name: 'guzzlehttp_total'  
                                     tags:
                                         clientId: '->clientId'
                                         status: '->response.statusCode'
