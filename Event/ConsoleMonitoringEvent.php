@@ -37,9 +37,6 @@ class ConsoleMonitoringEvent extends MonitoringEvent
 
     protected static function getPeakMemory()
     {
-        $memory = memory_get_peak_usage(true);
-        $memory = ($memory > 1024 ? intval($memory / 1024) : 0);
-
-        return $memory;
+        return memory_get_peak_usage(true);
     }
 }
