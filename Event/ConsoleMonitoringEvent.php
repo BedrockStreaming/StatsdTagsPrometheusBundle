@@ -19,7 +19,7 @@ class ConsoleMonitoringEvent extends MonitoringEvent
             'startTime' => $startTime,
             'executionTime' => $executionTime,
             'executionTimeHumanReadable' => ($executionTime * 1000),
-            'peakMemory' => self::getPeakMemory(),
+            'peakMemory' => self::getPeakMemoryInBytes(),
             'underscoredCommandName' => self::getUnderscoredEventCommandName($event),
             // The original event is sent as a parameter, just in case
             'originalEvent' => $event,
@@ -35,11 +35,8 @@ class ConsoleMonitoringEvent extends MonitoringEvent
         return null;
     }
 
-    protected static function getPeakMemory()
+    protected static function getPeakMemoryInBytes()
     {
-        $memory = memory_get_peak_usage(true);
-        $memory = ($memory > 1024 ? intval($memory / 1024) : 0);
-
-        return $memory;
+        return memory_get_peak_usage(true);
     }
 }

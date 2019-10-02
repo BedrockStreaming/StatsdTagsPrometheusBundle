@@ -160,6 +160,17 @@ class MetricTest extends TestCase
                     'tags' => [],
                     'param_value' => 'customValue',
                 ],
+                '12045465000',
+            ],
+            [
+                new MonitoringEvent(['customValue' => 12045.465]),
+                [
+                    'type' => 'timer',
+                    'name' => 'http_request_total',
+                    'configurationTags' => [],
+                    'tags' => [],
+                    'param_value' => 'customValue',
+                ],
                 '12045465',
             ],
         ];

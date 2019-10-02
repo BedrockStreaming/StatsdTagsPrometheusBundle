@@ -109,7 +109,7 @@ class Metric implements MetricInterface
         }
         if ($this->event instanceof MonitoringEventInterface) {
             // Using the valid event type, values are now in parameters
-            return $this->event->getParameter($this->paramValue);
+            return $this->correctValue($this->event->getParameter($this->paramValue));
         }
         if (!\method_exists($this->event, $this->paramValue)) {
             // Legacy compatibility
@@ -119,7 +119,7 @@ class Metric implements MetricInterface
             );
         }
 
-        return \call_user_func([$this->event, $this->paramValue]);
+        return $this->correctValue(\call_user_func([$this->event, $this->paramValue]));
     }
 
     public function getResolvedType(): string
@@ -197,5 +197,15 @@ class Metric implements MetricInterface
             default:
                 return $valueToResolve;
         }
+    }
+
+    private function correctValue(string $value): string
+    {
+        /* @see https://github.com/prometheus/statsd_exporter/pull/178/files#diff-557eb2a359922e8de5f18397fed0cd99R423 */
+        if ($this->getResolvedType() === self::STATSD_TYPE_TIMER) {
+            return $value * 1000;
+        }
+
+        return $value;
     }
 }
