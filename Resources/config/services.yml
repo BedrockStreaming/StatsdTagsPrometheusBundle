@@ -1,8 +1,0 @@
-parameters:
-#    property_accessor.class_statsdtagsprometheusbundle: Symfony\Component\PropertyAccess\PropertyAccessor
-
-services:
-#    property_accessor_statsdtagsprometheusbundle:
-#        public: false
-#        class: "%property_accessor.class_statsdtagsprometheusbundle%"
-#        arguments: [true] # magical => true

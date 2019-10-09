@@ -5,17 +5,17 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\DependencyInjection;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\Server;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\DataCollector\StatsdDataCollector;
-use M6Web\Bundle\StatsdPrometheusBundle\Listener\ConsoleListener;
+use M6Web\Bundle\StatsdPrometheusBundle\Listener\ConsoleEventsSubscriber;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
-use M6Web\Bundle\StatsdPrometheusBundle\Listener\KernelEventsListener;
+use M6Web\Bundle\StatsdPrometheusBundle\Listener\KernelEventsSubscriber;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 {
@@ -43,9 +43,6 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
     {
         $this->container = $container;
 
-        $loader = new Loader\YamlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
-
         $this->metricsPrefix = $config['metrics']['prefix'] ?? '';
         $this->servers = $config['servers'] ?? [];
         $this->clients = $config['clients'] ?? [];
@@ -59,13 +56,9 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
             );
         }
 
-        $this->registerConsoleEventListener();
-
-        $this->container->autowire(KernelEventsListener::class)->setAutoconfigured(true);
-
-        if ($this->isDebugEnabled()) {
-            $this->loadDebugConfiguration();
-        }
+        $this->registerKernelEventsSubscriber();
+        $this->registerConsoleEventsSubscriber();
+        $this->loadDebugConfiguration();
     }
 
     public function getServers(): array
@@ -142,8 +135,8 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
                     // Prefix the metric name.
                     $metricConfig['name'] = $this->metricsPrefix.$metricConfig['name'];
                 }
-                // Set all the metrics config array n the object
-                // One event can send several metrics. Multiple metrics will be handled in the Listener manager.
+                // Set all the metrics config array in the object
+                // One event can send several metrics. Multiple metrics will be handled in the EventListener.
                 $eventListenerDefinition
                     ->addTag('kernel.event_listener', [
                         'event' => $eventName,
@@ -156,24 +149,34 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
             }
         }
 
-        $eventListenerDefinition
-            // Define event listener on kernel terminate
-            ->addTag('kernel.event_listener', [
-                'event' => 'kernel.terminate',
+        // Define event listener on kernel terminate
+        $eventListenerDefinition->addTag(
+            'kernel.event_listener',
+            [
+                'event' => KernelEvents::TERMINATE,
                 'method' => 'onKernelTerminate',
                 'priority' => -100,
-            ])
+            ]
+        );
+        if ($this->isSymfonyConsoleComponentLoaded()) {
             // Define event listener on console terminate
-            ->addTag(
-                'kernel.event_listener', [
-                'event' => 'console.terminate',
-                'method' => 'onConsoleTerminate',
-                'priority' => -100,
-            ]);
+            $eventListenerDefinition->addTag(
+                'kernel.event_listener',
+                [
+                    'event' => ConsoleEvents::TERMINATE,
+                    'method' => 'onConsoleTerminate',
+                    'priority' => -100,
+                ]
+            );
+        }
     }
 
     protected function loadDebugConfiguration(): void
     {
+        if (!$this->isDebugEnabled()) {
+            return;
+        }
+
         $definition = new Definition(StatsdDataCollector::class);
         $definition->setPublic(true);
         $definition->addTag('data_collector', [
@@ -244,26 +247,26 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
         ]);
     }
 
-    protected function registerConsoleEventListener(): void
+    protected function registerKernelEventsSubscriber(): void
     {
-        $this->container
-            ->register('m6.listener.statsd_prometheus.console', ConsoleListener::class)
-            ->addTag(
-                'kernel.event_listener',
-                ['event' => 'console.command', 'method' => 'onCommand']
-            )
-            ->addTag(
-                'kernel.event_listener',
-                ['event' => 'console.exception', 'method' => 'onException']
-            )
-            ->addTag(
-                'kernel.event_listener',
-                ['event' => 'console.terminate', 'method' => 'onTerminate']
-            )
-            ->addMethodCall('setEventDispatcher', [new Reference('event_dispatcher')]);
+        $this->container->autowire(KernelEventsSubscriber::class)->setAutoconfigured(true);
     }
 
-    protected function isDebugEnabled()
+    protected function registerConsoleEventsSubscriber(): void
+    {
+        if (!$this->isSymfonyConsoleComponentLoaded()) {
+            return;
+        }
+
+        $this->container->autowire(ConsoleEventsSubscriber::class)->setAutoconfigured(true);
+    }
+
+    protected function isSymfonyConsoleComponentLoaded(): bool
+    {
+        return class_exists(ConsoleEvents::class);
+    }
+
+    protected function isDebugEnabled(): bool
     {
         return $this->container->hasParameter('kernel.debug')
             && $this->container->getParameter('kernel.debug');
