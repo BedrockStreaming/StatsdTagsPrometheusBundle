@@ -4,7 +4,6 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Metric;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEventInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -26,7 +25,7 @@ class Metric implements MetricInterface
     /** @var PropertyAccess */
     protected $propertyAccessor;
 
-    /** @var mixed|Event */
+    /** @var object */
     private $event;
 
     /** @var string */
@@ -50,8 +49,8 @@ class Metric implements MetricInterface
     /**
      * Metric constructor.
      *
-     * @param Event|mixed $event
-     * @param array       $metricConfig
+     * @param object $event
+     * @param array  $metricConfig
      */
     public function __construct($event, array $metricConfig = [])
     {

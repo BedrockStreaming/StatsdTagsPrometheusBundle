@@ -5,7 +5,7 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Listener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\PropertyAccess;
 
 class EventListener
@@ -19,7 +19,7 @@ class EventListener
     protected $metricHandler;
 
     /**
-     * @param mixed  $event     Event object sent with the event dispatcher
+     * @param object $event     Event object sent with the event dispatcher
      * @param string $eventName name of the event set in the config
      */
     public function handleEvent($event, string $eventName): void
@@ -45,7 +45,7 @@ class EventListener
         $this->metricHandler->tryToSendMetrics();
     }
 
-    public function onKernelTerminate(PostResponseEvent $event): void
+    public function onKernelTerminate(TerminateEvent $event): void
     {
         $this->metricHandler->sendMetrics();
     }

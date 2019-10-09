@@ -3,8 +3,8 @@
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Metric;
 
 use Fixtures\CustomEventTest;
-use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
+use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -26,7 +26,7 @@ class MetricTest extends TestCase
     {
         return [
             [
-                new MonitoringEvent(),
+                new TestMonitoringEvent(),
                 [
                     'type' => 'counter',
                     'name' => 'http_request_total',
@@ -36,7 +36,7 @@ class MetricTest extends TestCase
                 'http_request_total',
             ],
             [
-                new MonitoringEvent(['placeHolder' => 'custom_name']),
+                new TestMonitoringEvent(['placeHolder' => 'custom_name']),
                 [
                     'type' => 'counter',
                     'name' => 'http_request_total.<placeHolder>',
@@ -63,7 +63,7 @@ class MetricTest extends TestCase
     {
         return [
             [
-                new MonitoringEvent(['placeHolder' => 'custom_name']),
+                new TestMonitoringEvent(['placeHolder' => 'custom_name']),
                 [
                     'type' => 'increment',
                     'name' => 'http_request_total',
@@ -73,7 +73,7 @@ class MetricTest extends TestCase
                 'c',
             ],
             [
-                new MonitoringEvent(),
+                new TestMonitoringEvent(),
                 [
                     'type' => 'counter',
                     'name' => 'http_request_total',
@@ -83,7 +83,7 @@ class MetricTest extends TestCase
                 'c',
             ],
             [
-                new MonitoringEvent(['placeHolder' => 'custom_name']),
+                new TestMonitoringEvent(['placeHolder' => 'custom_name']),
                 [
                     'type' => 'gauge',
                     'name' => 'http_request_total',
@@ -93,7 +93,7 @@ class MetricTest extends TestCase
                 'g',
             ],
             [
-                new MonitoringEvent(['placeHolder' => 'custom_name']),
+                new TestMonitoringEvent(['placeHolder' => 'custom_name']),
                 [
                     'type' => 'timer',
                     'name' => 'http_request_total',
@@ -120,7 +120,7 @@ class MetricTest extends TestCase
     {
         return [
             [
-                new MonitoringEvent(['placeHolder' => 'custom_name']),
+                new TestMonitoringEvent(['placeHolder' => 'custom_name']),
                 [
                     'type' => 'increment',
                     'name' => 'http_request_total',
@@ -130,7 +130,7 @@ class MetricTest extends TestCase
                 '1',
             ],
             [
-                new MonitoringEvent(['customValue' => 12]),
+                new TestMonitoringEvent(['customValue' => 12]),
                 [
                     'type' => 'counter',
                     'name' => 'http_request_total',
@@ -141,7 +141,7 @@ class MetricTest extends TestCase
                 '12',
             ],
             [
-                new MonitoringEvent(['customValue' => 205]),
+                new TestMonitoringEvent(['customValue' => 205]),
                 [
                     'type' => 'gauge',
                     'name' => 'http_request_total',
@@ -152,7 +152,7 @@ class MetricTest extends TestCase
                 '205',
             ],
             [
-                new MonitoringEvent(['customValue' => 12045465]),
+                new TestMonitoringEvent(['customValue' => 12045465]),
                 [
                     'type' => 'timer',
                     'name' => 'http_request_total',
@@ -163,7 +163,7 @@ class MetricTest extends TestCase
                 '12045465000',
             ],
             [
-                new MonitoringEvent(['customValue' => 12045.465]),
+                new TestMonitoringEvent(['customValue' => 12045.465]),
                 [
                     'type' => 'timer',
                     'name' => 'http_request_total',
@@ -191,7 +191,7 @@ class MetricTest extends TestCase
     {
         $resolvers = [];
 
-        $monitoringEvent = new MonitoringEvent(
+        $monitoringEvent = new TestMonitoringEvent(
             [
                 'resolved_tag' => 'resolved-value-auto',
                 'explicit_tag' => 'explicit-value',
