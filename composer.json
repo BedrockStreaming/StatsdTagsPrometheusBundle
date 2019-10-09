@@ -13,19 +13,26 @@
     ],
     "config": {
         "bin-dir": "bin",
-        "vendor-dir": "vendor"
+        "vendor-dir": "vendor",
+        "sort-packages":  true
     },
     "require": {
-        "php": "^7.1",
-        "symfony/property-access": "^3.4 || ^4.0",
-        "symfony/expression-language": "^3.4 || ^4.0"
+        "php": "^7.2",
+        "psr/container": "^1.0",
+        "psr/event-dispatcher": "^1.0",
+        "symfony/expression-language": "^3.4 || ^4.0",
+        "symfony/property-access": "^3.4 || ^4.0"
     },
     "require-dev": {
         "m6web/php-cs-fixer-config": "^1.0",
-        "symfony/symfony": "^3.4 || ^4.0",
-        "symfony/phpunit-bridge": "^3.4|^4.0",
-        "symfony/var-dumper": "^4.1",
-        "sensiolabs/security-checker": "^5.0"
+        "sensiolabs/security-checker": "^5.0",
+        "symfony/phpunit-bridge": "^3.4 || ^4.2.3",
+        "symfony/symfony": "^4.3",
+        "symfony/var-dumper": "^4.1"
+    },
+    "suggest": {
+        "symfony/console": "^4.3",
+        "symfony/http-kernel": "^4.3"
     },
     "autoload": {
         "psr-4": { "M6Web\\Bundle\\StatsdPrometheusBundle\\": "" },
