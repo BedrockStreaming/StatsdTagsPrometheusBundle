@@ -4,16 +4,16 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Test\Metric;
 
 use Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
-use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
+use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Tests\Fixtures\KernelForTest;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MetricHandlerTest extends TestCase
 {
@@ -21,7 +21,7 @@ class MetricHandlerTest extends TestCase
     {
         // -- Given --
         $metricHandler = $this->getMetricHandlerObject();
-        $metric = new Metric(new MonitoringEvent(), [
+        $metric = new Metric(new TestMonitoringEvent(), [
             'name' => 'myMetricName',
             'type' => 'increment',
             'configurationTags' => [],
@@ -29,7 +29,7 @@ class MetricHandlerTest extends TestCase
         ]);
         $expected = new \SplQueue();
         $expected->enqueue(
-            new Metric(new MonitoringEvent(), [
+            new Metric(new TestMonitoringEvent(), [
                 'name' => 'myMetricName',
                 'type' => 'increment',
                 'configurationTags' => [],
@@ -215,8 +215,10 @@ class MetricHandlerTest extends TestCase
 
     /**
      * @dataProvider getDataEventsWithFormattedMetrics
+     *
+     * @param Event|\Symfony\Component\EventDispatcher\Event
      */
-    public function testGetFormattedMetricsReturnsExpected(Event $event, Request $masterRequest, array $metricConfig, string $expectedResult)
+    public function testGetFormattedMetricsReturnsExpected($event, Request $masterRequest, array $metricConfig, string $expectedResult)
     {
         // -- Given --
         $metric = new Metric($event, $metricConfig);
@@ -327,9 +329,9 @@ class MetricHandlerTest extends TestCase
                 // The custom metric tags are ignored because, the object does not instantiate MonitoringEventInterface
                 'expectedResult' => 'http.status.200:1|c|#project:service-6play-users',
             ],
-            // Increment: object MonitoringEvent (no tags)
+            // Increment: object TestMonitoringEvent() (no tags)
             [
-                'event' => new MonitoringEvent(),
+                'event' => new TestMonitoringEvent(),
                 'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
@@ -339,9 +341,9 @@ class MetricHandlerTest extends TestCase
                 ],
                 'expectedResult' => 'http.status.200:1|c',
             ],
-            // Increment: object MonitoringEvent (With tags)
+            // Increment: object TestMonitoringEvent() (With tags)
             [
-                'event' => new MonitoringEvent([
+                'event' => new TestMonitoringEvent([
                     // This param return the metric value
                     'counterValue' => 124,
                     // Those metric tags values are specified when we send the event
@@ -367,9 +369,9 @@ class MetricHandlerTest extends TestCase
                 // We are supposed to have all the metric data and every defined tags
                 'expectedResult' => 'http.status.200:124|c|#project:service-6play-users,country:France,platform:m6web',
             ],
-            // Counter with custom param: object MonitoringEvent (no tags)
+            // Counter with custom param: object TestMonitoringEvent() (no tags)
             [
-                'event' => new MonitoringEvent([
+                'event' => new TestMonitoringEvent([
                     'getCustomParam' => 32546,
                 ]),
                 'request' => $defaultRequest,
@@ -383,9 +385,9 @@ class MetricHandlerTest extends TestCase
                 // We are supposed to get the metric name, type and the custom parameter value
                 'expectedResult' => 'specific_sql_query:32546|c',
             ],
-            // Counter with custom param: object MonitoringEvent (With tags)
+            // Counter with custom param: object TestMonitoringEvent() (With tags)
             [
-                'event' => new MonitoringEvent([
+                'event' => new TestMonitoringEvent([
                     'getCustomParam' => 12456,
                     'project' => 'service-6play-users',
                     'country' => 'France',
@@ -406,7 +408,7 @@ class MetricHandlerTest extends TestCase
             ],
             // Increment with dynamic metric name (no tags)
             [
-                'event' => new MonitoringEvent([
+                'event' => new TestMonitoringEvent([
                     'myFirstPlaceHolder' => 'myPlaceHolderValue',
                 ]),
                 'request' => $defaultRequest,
@@ -421,7 +423,7 @@ class MetricHandlerTest extends TestCase
             ],
             // Increment with multiple dynamic metric name with multiple placeholders (With tags) => COMBO
             [
-                'event' => new MonitoringEvent([
+                'event' => new TestMonitoringEvent([
                     'myFirstPlaceHolder' => 'firstPlaceHolderValue',
                     'mySecondPlaceHolder' => 'secondPlaceHolderValue',
                 ]),

@@ -2,9 +2,9 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Client;
 
-use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
+use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
 use PHPUnit\Framework\TestCase;
 
 class EventListenerTest extends TestCase
@@ -12,7 +12,7 @@ class EventListenerTest extends TestCase
     public function testSetFlushMetricsQueueIsAlwaysCalledWhenHandledEventIsSentInHandleEvent()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $eventConfig = [
             'flush_metrics_queue' => false,
@@ -39,7 +39,7 @@ class EventListenerTest extends TestCase
     public function testSetFlushMetricsQueueIsNotCalledWhenNotHandledEventIsSentInHandleEvent()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $metricHandlerMock = $this->getMetricHandlerMock();
         $eventListener = $this->getEventListenerObject($metricHandlerMock);
@@ -54,7 +54,7 @@ class EventListenerTest extends TestCase
     public function testAddMetricToQueueFunctionIsCalledOnceWhenHandledEventWithOneMetricIsSentInHandleEventFunction()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $eventConfig = [
             'flush_metrics_queue' => false,
@@ -81,7 +81,7 @@ class EventListenerTest extends TestCase
     public function testAddMetricToQueueFunctionIsCalledTwiceWhenHandledEventWithTwoMetricsIsSentInHandleEventFunction()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $eventConfig = [
             'flush_metrics_queue' => false,
@@ -115,7 +115,7 @@ class EventListenerTest extends TestCase
     public function testAddMetricToQueueFunctionIsNotCalledTwiceWhenHandledEventWithNoMetricIsSentInHandleEventFunction()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $eventConfig = [
             'flush_metrics_queue' => false,
@@ -135,7 +135,7 @@ class EventListenerTest extends TestCase
     public function testAddMetricToQueueFunctionIsNotCalledTwiceWhenNotHandledEventIsSentInHandleEventFunction()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $metricHandlerMock = $this->getMetricHandlerMock();
         $eventListener = $this->getEventListenerObject($metricHandlerMock);
@@ -150,7 +150,7 @@ class EventListenerTest extends TestCase
     public function testTryToSendMetricsFunctionIsCalledOnceWhenHandledEventIsSent()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $eventConfig = [
             'flush_metrics_queue' => false,
@@ -177,7 +177,7 @@ class EventListenerTest extends TestCase
     public function testTryToSendMetricsFunctionIsNotCalledOnceWhenNotHandledEventIsSent()
     {
         // -- Given --
-        $monitoringEvent = new MonitoringEvent();
+        $monitoringEvent = new TestMonitoringEvent();
         $eventName = 'http_status_listener';
         $metricHandlerMock = $this->getMetricHandlerMock();
         $eventListener = $this->getEventListenerObject($metricHandlerMock);

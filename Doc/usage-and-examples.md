@@ -27,9 +27,9 @@
 
 ### 1. Kernel Events
 
-#### `statsdprometheus.kernel.terminate`
+#### `KernelTerminateMonitoringEvent`
 
-This event decorates the `kernel.terminate` event and add useful monitoring metrics on top:
+This event decorates the symfony `KernelEvents::TERMINATE` event and add useful monitoring metrics on top:
 - host (http host requested by the browser)
 - method (GET/POST/...)
 - memory (maximum memory allocated)
@@ -37,15 +37,15 @@ This event decorates the `kernel.terminate` event and add useful monitoring metr
 - status (200/404/5xx/...)
 - timing (time elapsed since php started exection of the request)
 
-#### `statsdprometheus.kernel.exception`
+#### `KernelExceptionMonitoringEvent`
 
 This event is provided for backward compatibility for your apps that used to use our `m6web/http-kernel-bundle` bundle. It provides the http response code sent.
 
 ### 2. Console events
 
-#### `statsdprometheus.console.terminate`
+#### `ConsoleTerminateMonitoringEvent`
 
-This event decorates the `console.terminate` event and adds the following data:
+This event decorates the symfony `ConsoleEvents::TERMINATE` event and adds the following data:
 
 
 - startTime: The command starting time
@@ -54,15 +54,15 @@ This event decorates the `console.terminate` event and adds the following data:
 - peakMemory: The peak memory usage
 - underscoredCommandName: the formatted name of the current command
             
-#### `statsdprometheus.console.command`
+#### `ConsoleCommandMonitoringEvent`
 
 This sends the same values than `statsdprometheus.console.terminate`;
 
-#### `statsdprometheus.console.error`
+#### `ConsoleErrorMonitoringEvent`
 
 This sends the same values than `statsdprometheus.console.terminate`;
 
-#### `statsdprometheus.console.exception`
+#### `ConsoleExceptionMonitoringEvent`
 
 This sends the same values than `statsdprometheus.console.terminate`;
 
@@ -73,23 +73,22 @@ This sends the same values than `statsdprometheus.console.terminate`;
 For every new event you need to dispatch, you have to use a class that implements 
 `M6Web\Bundle\StatsdPrometheusBundle\Events\MonitoringEventInterface`.
 
-This bundle offers you a generic implementation called
- `M6Web\Bundle\StatsdPrometheusBundle\Events\MonitoringEvent` that will handle most of your needs.
- So you won't need to create your own events anymore. You can use this class to send your events
-  directly like this:
+This bundle offers you an abstract implementation called
+ `M6Web\Bundle\StatsdPrometheusBundle\Events\AbstractMonitoringEvent` that will handle most of your needs.
+ You only need to create your specialized event extending it and listen to them directly like this:
  
  ```php
  // Simple example without tags
- $eventDispatcher->dispatch('event1', new MonitoringEvent());
+ $eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent());
  
  // Simple example with tags
- $eventDispatcher->dispatch('event1', new MonitoringEvent([
+ $eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([
      'myTagLabel1' => 'myTag_value1',
      'myTagLabel2' => 'myTag_value2',
  ]));
  
  // Example with tags and param value
-  $eventDispatcher->dispatch('event1', new MonitoringEvent([
+  $eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([
       'myTagLabel1' => 'myTag_value1',
       'myTagLabel2' => 'myTag_value2',
       // Defined param value
@@ -237,10 +236,10 @@ event1:
 This is the code you can send:
 ```php
 // Without sending the tags (they'll be ignored)
-$eventDispatcher->dispatch('event1', new MonitoringEvent());
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent());
 
 // With sending the tags
-$eventDispatcher->dispatch('event1', new MonitoringEvent([
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([
     'myTagLabel1' => 'myTag_value1',
     'myTagLabel2' => 'myTag_value2',
 ]));
@@ -264,12 +263,12 @@ event1:
 This is the code you can send:
 ```php
 // Without sending the tags (they'll be ignored)
-$eventDispatcher->dispatch('event1', new MonitoringEvent([
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([
     'myCounterValue' => 1234,
 ]));
 
 // With sending the tags
-$eventDispatcher->dispatch('event1', new MonitoringEvent([   
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([   
     'myCounterValue' => 1234,
     'myTagLabel1' => 'myTag_value1',
     'myTagLabel2' => 'myTag_value2',
@@ -299,13 +298,13 @@ event1:
 This is the event definition you can dispatch:
 ```php
 // Without sending the tags (they will be ignored)
-$eventDispatcher->dispatch('event1', new MonitoringEvent([
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([
     'executionTimeValue' => 1234,
     'numberOfResults' => 42,
 ]));
 
 // With sending the tags
-$eventDispatcher->dispatch('event1', new MonitoringEvent([    
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([    
     'executionTimeValue' => 1234,
     'numberOfResults' => 42,
     'customTag1' => 'the tag1 value',
@@ -339,14 +338,14 @@ event1:
 This is the event definition you can dispatch (the new way):
 ```php
 // Without sending the tags (they will be ignored)
-$eventDispatcher->dispatch('event1', new MonitoringEvent([
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([
     'statusCode' => $this->getHttpCode(),
     'country' => 'france',
     'countryCounter' => $this->getCountryCounter(),
 ]));
 
 // With sending the tags
-$eventDispatcher->dispatch('event1', new MonitoringEvent([
+$eventDispatcher->dispatch(new MyEventExtendingMonitoringEvent([
     'code' => $this->getHttpCode(),
     'country' => 'france',
     'countryCounter' => $this->getCountryCounter(),
@@ -357,7 +356,7 @@ $eventDispatcher->dispatch('event1', new MonitoringEvent([
 This is the event definition you can dispatch (old-fashioned way):
 ```php
 // Without sending the tags (they will be ignored)
-$eventDispatcher->dispatch('event1', new CustomEvent(
+$eventDispatcher->dispatch(new MyEventExtendingCustomEvent(
     $this->getHttpCode(),
     'france',
     $this->getCountryCounter()

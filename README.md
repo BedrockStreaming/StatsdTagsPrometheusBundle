@@ -9,6 +9,7 @@ Statsd Bundle for Prometheus.
 * Version 1.6 is compatible with Prometheus 
 (converted with [statsd_exporter](https://github.com/prometheus/statsd_exporter))
 * Version 2+ adds new features and the configuration changed a bit, [see upgrade doc](Doc/upgrades/from-1-to-2.md)
+* Version 3+ adds compatibility with psr 14 about event dispatcher and use specialized events without names, [see upgrade doc](Doc/upgrades/from-2-to-3.md)
 * Handle Prometheus tags in the metrics  
  
 ## Requirements

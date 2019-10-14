@@ -123,15 +123,15 @@ m6web_statsd_prometheus:
             groups:
                 default_group: #this is the root key / group name.
                     events:
-                        event1:
+                        Project\Event\EventClass1:
                             [...]
-                        event2:
+                        Project\Event\EventClass2:
                             [...]
                 ohter_group: #this is the root key / group name.
                     events:
-                        event3:
+                        Project\Event\EventClass3:
                             [...]
-                        event4:
+                        Project\Event\EventClass4:
                             [...]
 ```
 
@@ -153,7 +153,7 @@ Configure the events
 
 ### Description
 
-An event set up an event name, and metrics to send when it is called.
+In events, you set up each events and their associated metrics to send when it is dispatched.
 
 ```yaml
 m6web_statsd_prometheus:
@@ -163,22 +163,22 @@ m6web_statsd_prometheus:
             groups:
                 default_group:
                     events:
-                        eventName1: #this is the root key / event name.
+                        Project\Event\EventClass1: #this is the root key / event name.
                             flush_metrics_queue: true #Optional
                             metrics: 
                                 - [...metric 1...]
                                 - [...metric 2...]
-                        eventName2: #this is the root key / event name.
+                        Project\Event\EventClass2: #this is the root key / event name.
                             metrics: 
                                 - [...metric 1...]
                                 - [...metric 2...]
                 groupB: #This is an example name for a group
                     events:
-                        eventName3: #this is the root key / event name.
+                        Project\Event\EventClass3: #this is the root key / event name.
                             metrics: 
                                 - [...metric 1...]
                                 - [...metric 2...]
-                        eventName4: #this is the root key / event name.
+                        Project\Event\EventClass4: #this is the root key / event name.
                             flush_metrics_queue: false #Optional (Default value)
                             metrics: 
                                 - [...metric 1...]
@@ -187,9 +187,7 @@ m6web_statsd_prometheus:
 
 ### Event options
 
-* `{root key}` = event name
-
-You can name the event key in camelCase or snake_case.
+* `{root key}` = the event class (or event name) that is being listened
 
 * `flush_metrics_queue`: boolean \[optional. Default: false\]
 
@@ -230,7 +228,7 @@ m6web_statsd_prometheus:
             groups:
                 default_group:
                     events:
-                        eventName1:
+                        Project\Event\EventClass1:
                             metrics:
                                 #This is the first metric definition
                                 -   type: 'counter'
@@ -304,7 +302,7 @@ m6web_statsd_prometheus:
                         tag_1_group_default: 'tagValueB' #value is required here
                         tag_2_group_default: 'tagValueB'
                     events:
-                        eventName1:
+                        Project\Event\EventClass1:
                             metrics:
                                 -   type: 'counter'
                                     name: 'metricName'
@@ -313,7 +311,7 @@ m6web_statsd_prometheus:
                                         tag_1_event_1: ~ #value here corresponds to an optional property accessor
                                         tag_2_event_1: 'myPropertyAccessor'
                                             
-                        eventName12:
+                        Project\Event\EventClass12:
                             metrics:
                                 -   type: 'increment'
                                     name: 'metricName'
@@ -403,7 +401,7 @@ m6web_statsd_prometheus:
             groups:
                 group1:
                     events:
-                        eventName1:
+                        Project\Event\EventClass1:
                             metrics:
                                 -   type: 'increment'
                                     name: 'metricName'
@@ -418,7 +416,7 @@ m6web_statsd_prometheus:
                          # set in the global configuration for this current group
                          project: "group project"
                      events:
-                         eventName1:
+                         Project\Event\EventClass1:
                              metrics:
                                  -   type: 'increment'
                                      name: 'metricName'

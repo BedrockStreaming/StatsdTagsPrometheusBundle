@@ -5,11 +5,11 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\DataCollector;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class StatsdDataCollector extends DataCollector
 {
@@ -36,7 +36,7 @@ class StatsdDataCollector extends DataCollector
     /**
      * Kernel event
      *
-     * @param Event $event The received event
+     * @param \Symfony\Component\EventDispatcher\Event|Event $event The received event
      */
     public function onKernelResponse($event)
     {

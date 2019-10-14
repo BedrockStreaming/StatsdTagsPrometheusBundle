@@ -1,21 +1,17 @@
 <?php
 
-namespace M6Web\Bundle\StatsdPrometheusBundle\Event;
+namespace M6Web\Bundle\StatsdPrometheusBundle\Event\Console;
 
+use M6Web\Bundle\StatsdPrometheusBundle\Event\AbstractMonitoringEvent;
 use Symfony\Component\Console\Event\ConsoleEvent;
 
-class ConsoleMonitoringEvent extends MonitoringEvent
+abstract class AbstractConsoleAbstractMonitoringEvent extends AbstractMonitoringEvent
 {
-    const COMMAND = 'statsdprometheus.console.command';
-    const TERMINATE = 'statsdprometheus.console.terminate';
-    const ERROR = 'statsdprometheus.console.error';
-    const EXCEPTION = 'statsdprometheus.console.exception';
-
     public static function createFromConsoleEvent(ConsoleEvent $event, int $startTime = 0)
     {
         $executionTime = !is_null($startTime) ? microtime(true) - $startTime : null;
 
-        return new self([
+        return new static([
             'startTime' => $startTime,
             'executionTime' => $executionTime,
             'executionTimeHumanReadable' => ($executionTime * 1000),

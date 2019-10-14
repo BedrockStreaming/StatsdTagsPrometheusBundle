@@ -2,15 +2,15 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class MonitoringEvent extends Event implements MonitoringEventInterface
+abstract class AbstractMonitoringEvent extends Event implements MonitoringEventInterface
 {
     /** @var array */
-    private $parameters;
+    protected $parameters;
 
     /**
-     * MonitoringEvent constructor.
+     * AbstractMonitoringEvent constructor.
      *
      * @param array $parameters parameters can contain metrics values, tags values or/and custom param values
      *
