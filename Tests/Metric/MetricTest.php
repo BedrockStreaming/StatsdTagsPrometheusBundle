@@ -205,6 +205,33 @@ class MetricTest extends TestCase
                 ],
                 '10002',
             ],
+            'timer returning null' => [
+                new TestMonitoringEvent(['customValue' => null]),
+                [
+                    'type' => 'timer',
+                    'name' => 'http_request_total',
+                    'configurationTags' => [],
+                    'tags' => [],
+                    'param_value' => 'customValue',
+                ],
+                '0',
+            ],
+            'custom value from object return null' => [
+                new class() {
+                    public function getCustomValue()
+                    {
+                        return null;
+                    }
+                },
+                [
+                    'type' => 'counter',
+                    'name' => 'http_request_total',
+                    'configurationTags' => [],
+                    'tags' => [],
+                    'param_value' => 'getCustomValue',
+                ],
+                '0',
+            ],
         ];
     }
 
