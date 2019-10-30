@@ -198,13 +198,17 @@ class Metric implements MetricInterface
         }
     }
 
-    private function correctValue(string $value): string
+    private function correctValue($value): string
     {
-        /* @see https://github.com/prometheus/statsd_exporter/pull/178/files#diff-557eb2a359922e8de5f18397fed0cd99R423 */
-        if ($this->getResolvedType() === self::STATSD_TYPE_TIMER) {
-            return $value * 1000;
+        if (!is_numeric($value)) {
+            $value = 0;
         }
 
-        return $value;
+        /* @see https://github.com/prometheus/statsd_exporter/pull/178/files#diff-557eb2a359922e8de5f18397fed0cd99R423 */
+        if ($this->getResolvedType() === self::STATSD_TYPE_TIMER) {
+            $value = $value * 1000;
+        }
+
+        return (string) $value;
     }
 }
