@@ -119,7 +119,7 @@ class MetricTest extends TestCase
     public function dataProviderGetMetricsValue()
     {
         return [
-            [
+            'increment value' => [
                 new TestMonitoringEvent(['placeHolder' => 'custom_name']),
                 [
                     'type' => 'increment',
@@ -129,7 +129,7 @@ class MetricTest extends TestCase
                 ],
                 '1',
             ],
-            [
+            'counter with fixed value' => [
                 new TestMonitoringEvent(['customValue' => 12]),
                 [
                     'type' => 'counter',
@@ -140,7 +140,7 @@ class MetricTest extends TestCase
                 ],
                 '12',
             ],
-            [
+            'gauge with fixed value' => [
                 new TestMonitoringEvent(['customValue' => 205]),
                 [
                     'type' => 'gauge',
@@ -151,7 +151,7 @@ class MetricTest extends TestCase
                 ],
                 '205',
             ],
-            [
+            'timer in ms with fixed value value corrected by 1000' => [
                 new TestMonitoringEvent(['customValue' => 12045465]),
                 [
                     'type' => 'timer',
@@ -162,7 +162,7 @@ class MetricTest extends TestCase
                 ],
                 '12045465000',
             ],
-            [
+            'timer in s with fixed value corrected by 1000' => [
                 new TestMonitoringEvent(['customValue' => 12045.465]),
                 [
                     'type' => 'timer',
