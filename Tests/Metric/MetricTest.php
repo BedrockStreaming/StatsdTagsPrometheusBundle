@@ -173,6 +173,38 @@ class MetricTest extends TestCase
                 ],
                 '12045465',
             ],
+            'custom value from object' => [
+                new class() {
+                    public function getCustomValue()
+                    {
+                        return 10;
+                    }
+                },
+                [
+                    'type' => 'counter',
+                    'name' => 'http_request_total',
+                    'configurationTags' => [],
+                    'tags' => [],
+                    'param_value' => 'getCustomValue',
+                ],
+                '10',
+            ],
+            'custom value from object corrected by 1000' => [
+                new class() {
+                    public function getCustomValue()
+                    {
+                        return 10.002;
+                    }
+                },
+                [
+                    'type' => 'timer',
+                    'name' => 'http_request_total',
+                    'configurationTags' => [],
+                    'tags' => [],
+                    'param_value' => 'getCustomValue',
+                ],
+                '10002',
+            ],
         ];
     }
 
