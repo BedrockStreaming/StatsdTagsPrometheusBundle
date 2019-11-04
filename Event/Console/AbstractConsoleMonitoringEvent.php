@@ -5,7 +5,7 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Event\Console;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\AbstractMonitoringEvent;
 use Symfony\Component\Console\Event\ConsoleEvent;
 
-abstract class AbstractConsoleAbstractMonitoringEvent extends AbstractMonitoringEvent
+abstract class AbstractConsoleMonitoringEvent extends AbstractMonitoringEvent
 {
     public static function createFromConsoleEvent(ConsoleEvent $event, int $startTime = 0)
     {
