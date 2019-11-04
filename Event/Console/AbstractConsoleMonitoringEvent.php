@@ -7,7 +7,7 @@ use Symfony\Component\Console\Event\ConsoleEvent;
 
 abstract class AbstractConsoleMonitoringEvent extends AbstractMonitoringEvent
 {
-    public static function createFromConsoleEvent(ConsoleEvent $event, int $startTime = 0)
+    public static function createFromConsoleEvent(ConsoleEvent $event, ?int $startTime = null)
     {
         $executionTime = !is_null($startTime) ? microtime(true) - $startTime : null;
 
