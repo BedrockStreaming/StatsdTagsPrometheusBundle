@@ -50,7 +50,6 @@ class Metric implements MetricInterface
      * Metric constructor.
      *
      * @param object $event
-     * @param array  $metricConfig
      */
     public function __construct($event, array $metricConfig = [])
     {
@@ -101,10 +100,7 @@ class Metric implements MetricInterface
         }
         if (empty($this->paramValue)) {
             //The param value is required for every type, except for increment which is handled above.
-            throw new MetricException(
-                \sprintf('The configuration of the event metric "%s" must define the "param_value" option.',
-                    \get_class($this->event))
-            );
+            throw new MetricException(\sprintf('The configuration of the event metric "%s" must define the "param_value" option.', \get_class($this->event)));
         }
         if ($this->event instanceof MonitoringEventInterface) {
             // Using the valid event type, values are now in parameters
@@ -112,10 +108,7 @@ class Metric implements MetricInterface
         }
         if (!\method_exists($this->event, $this->paramValue)) {
             // Legacy compatibility
-            throw new MetricException(
-                \sprintf('The event class "%s" must have a "%s" method or parameters in order to measure value.',
-                    \get_class($this->event), $this->paramValue)
-            );
+            throw new MetricException(\sprintf('The event class "%s" must have a "%s" method or parameters in order to measure value.', \get_class($this->event), $this->paramValue));
         }
 
         return $this->correctValue(\call_user_func([$this->event, $this->paramValue]));
