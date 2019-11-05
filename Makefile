@@ -39,6 +39,7 @@ clean-composer:
 	$(call printSection,CLEAN-COMPOSER)
 	rm -rf ${SOURCE_DIR}/composer
 	rm -f ${SOURCE_DIR}/composer.install.log
+	rm -f ${SOURCE_DIR}/composer.lock
 
 # COMPOSER
 ${COMPOSER_BIN}:

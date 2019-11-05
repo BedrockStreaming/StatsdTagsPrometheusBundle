@@ -18,9 +18,6 @@ class Server implements ServerInterface
     /**
      * Server constructor.
      *
-     * @param string $serverName
-     * @param array  $serverConfig
-     *
      * @throws ServerException
      */
     public function __construct(string $serverName, array $serverConfig)
@@ -34,11 +31,6 @@ class Server implements ServerInterface
 
     /**
      * Init the servers defined in the app configuration
-     *
-     * @param string $serverName
-     * @param array  $serverConfig
-     *
-     * @return bool
      *
      * @throws ServerException
      */

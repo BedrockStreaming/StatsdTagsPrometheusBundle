@@ -2,6 +2,6 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Event\Console;
 
-class ConsoleExceptionMonitoringEvent extends AbstractConsoleAbstractMonitoringEvent
+class ConsoleExceptionMonitoringEvent extends AbstractConsoleMonitoringEvent
 {
 }
