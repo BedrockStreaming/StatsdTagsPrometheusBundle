@@ -77,7 +77,7 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                            ->integerNode('max_queued_metrics')->min(1)->defaultValue(1000)->end()
+                            ->integerNode('max_queued_metrics')->isRequired()->end()
                         ->end()
                     ->end()
                 ->end()
