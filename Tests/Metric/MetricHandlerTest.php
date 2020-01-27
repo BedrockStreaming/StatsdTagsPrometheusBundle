@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Tests\Fixtures\KernelForTest;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class MetricHandlerTest extends TestCase
