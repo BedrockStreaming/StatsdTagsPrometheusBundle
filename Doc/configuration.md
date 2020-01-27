@@ -74,12 +74,13 @@ m6web_statsd_prometheus:
             port: 1236
     clients:
         default_client: #this is the root key / client name.
-            max_queued_metrics: 10 #optional
+            max_queued_metrics: 10
             server: 'default_server'
         client1: #this is the root key / client name.
+            max_queued_metrics: 100
             server: 'server1'
         client2: #this is the root key / client name.
-            max_queued_metrics: 10000 #optional
+            max_queued_metrics: 10000
             server: 'server2'        
 ```
 
@@ -93,10 +94,11 @@ You can name the client key in camelCase or snake_case.
 
 Name of the server you want to use for that client.
 
-* `max_queued_metrics`: int (OPTIONAL)
+* `max_queued_metrics`: int
 
 This is the limit of metrics we can queue before sending them to the UDP server.
-There is no limit by default.
+Depending on your script, accumulate too many metric can cause memory leak issues. 
+We recommend you to set a value between 3000 and 5000 (you can adjust according to your infrastructure).
 
 * `groups` : array
 
