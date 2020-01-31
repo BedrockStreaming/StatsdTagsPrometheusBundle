@@ -12,6 +12,4 @@ parameters:
         - 'Listener'
         - 'Metric'
         - 'Tests'
-    level: '2'
-    ignoreErrors:
-        - '#Parameter \#1 \$function of function call_user_func_array expects callable#'
+    level: '1'
