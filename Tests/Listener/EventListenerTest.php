@@ -189,9 +189,6 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
     private function getMetricHandlerMock()
     {
         return $this->createMock(MetricHandler::class);

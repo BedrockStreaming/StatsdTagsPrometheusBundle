@@ -215,8 +215,6 @@ class MetricHandlerTest extends TestCase
 
     /**
      * @dataProvider getDataEventsWithFormattedMetrics
-     *
-     * @param Event|\Symfony\Component\EventDispatcher\Event
      */
     public function testGetFormattedMetricsReturnsExpected($event, Request $masterRequest, array $metricConfig, string $expectedResult)
     {

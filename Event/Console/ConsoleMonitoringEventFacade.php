@@ -6,26 +6,18 @@ use Symfony\Component\Console\Event\ConsoleEvent;
 
 class ConsoleMonitoringEventFacade
 {
-    /**
-     * @var int
-     */
-    protected $startTime;
-    /**
-     * @var int
-     */
-    protected $executionTime;
-    /**
-     * @var int
-     */
-    protected $memoryPeakInBytes;
-    /**
-     * @var string
-     */
-    protected $commandName;
+    /** @var float|null */
+    private $startTime;
+    /** @var float|null */
+    private $executionTime;
+    /** @var int */
+    private $memoryPeakInBytes;
+    /** @var string */
+    private $commandName;
 
     public function __construct(
-        int $startTime,
-        int $executionTime,
+        ?float $startTime,
+        ?float $executionTime,
         int $memoryPeakInBytes,
         string $commandName
     ) {
@@ -35,7 +27,7 @@ class ConsoleMonitoringEventFacade
         $this->commandName = $commandName;
     }
 
-    public static function fromEvent(ConsoleEvent $event, int $startTime): ConsoleMonitoringEventFacade
+    public static function fromEvent(ConsoleEvent $event, ?float $startTime): ConsoleMonitoringEventFacade
     {
         return new self(
             $startTime,
@@ -70,12 +62,12 @@ class ConsoleMonitoringEventFacade
         return memory_get_peak_usage(true);
     }
 
-    public function getStartTime(): int
+    public function getStartTime(): ?float
     {
         return $this->startTime;
     }
 
-    public function getExecutionTime(): int
+    public function getExecutionTime(): ?float
     {
         return $this->executionTime;
     }

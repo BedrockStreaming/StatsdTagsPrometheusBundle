@@ -6,6 +6,7 @@ use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEventInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Metric implements MetricInterface
 {
@@ -22,7 +23,7 @@ class Metric implements MetricInterface
     const TAG_PROPERTY_ACCESSOR = '->';
     const TAG_PARAMETER_KEY = '%=';
 
-    /** @var PropertyAccess */
+    /** @var PropertyAccessor */
     protected $propertyAccessor;
 
     /** @var object */
@@ -96,7 +97,7 @@ class Metric implements MetricInterface
     public function getResolvedValue(): string
     {
         if ($this->type === self::METRIC_TYPE_INCREMENT) {
-            return 1;
+            return (string)1;
         }
         if (empty($this->paramValue)) {
             //The param value is required for every type, except for increment which is handled above.
@@ -136,7 +137,7 @@ class Metric implements MetricInterface
         // Add global parameters (configured in client or group)
         foreach (array_merge($this->configurationTags, $this->tags) as $tagName => $tagValue) {
             $resolvedTag = $this->resolveTagValue(
-                // By default (~), we look for the parameter with the same name as the tag.
+            // By default (~), we look for the parameter with the same name as the tag.
                 !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY.$tagName,
                 $resolvers
             );
@@ -202,6 +203,6 @@ class Metric implements MetricInterface
             $value = $value * 1000;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 }
