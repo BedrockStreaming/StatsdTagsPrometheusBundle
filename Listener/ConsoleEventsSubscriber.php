@@ -3,8 +3,8 @@
 namespace M6Web\Bundle\StatsdPrometheusBundle\Listener;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleCommandMonitoringEvent;
-use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleErrorMonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleExceptionMonitoringEvent;
+use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleMonitoringEventFacade;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleTerminateMonitoringEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\ConsoleEvents;
@@ -42,7 +42,10 @@ class ConsoleEventsSubscriber implements EventSubscriberInterface
     {
         $this->startTime = microtime(true);
         $this->eventDispatcher->dispatch(
-            ConsoleCommandMonitoringEvent::createFromConsoleEvent($event, $this->startTime)
+            //ConsoleCommandMonitoringEvent::createFromConsoleEvent($event, $this->startTime)
+            ConsoleCommandMonitoringEvent::fromFacade(
+                ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
+            )
         );
     }
 
@@ -51,18 +54,24 @@ class ConsoleEventsSubscriber implements EventSubscriberInterface
         if ($event->getExitCode() != 0) {
             // For non-0 exit command, fire an ERROR event
             $this->eventDispatcher->dispatch(
-                ConsoleErrorMonitoringEvent::createFromConsoleEvent($event, $this->startTime)
+                ConsoleCommandMonitoringEvent::fromFacade(
+                    ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
+                )
             );
         }
         $this->eventDispatcher->dispatch(
-            ConsoleTerminateMonitoringEvent::createFromConsoleEvent($event, $this->startTime)
+              ConsoleTerminateMonitoringEvent::fromFacade(
+                  ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
+              )
         );
     }
 
     public function onException(ConsoleEvent $event): void
     {
         $this->eventDispatcher->dispatch(
-            ConsoleExceptionMonitoringEvent::createFromConsoleEvent($event, $this->startTime)
+            ConsoleExceptionMonitoringEvent::fromFacade(
+                  ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
+              )
         );
     }
 }

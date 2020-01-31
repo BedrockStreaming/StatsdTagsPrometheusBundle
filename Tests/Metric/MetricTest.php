@@ -2,8 +2,8 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Metric;
 
-use Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
+use M6Web\Bundle\StatsdPrometheusBundle\Tests\Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;

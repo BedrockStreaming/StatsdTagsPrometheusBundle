@@ -15,16 +15,16 @@ define printSection
 endef
 
 # BUILD
-build: install test cs-ci sf-security-checker
+build: install quality test sf-security-checker
 
 # BUILD CI
-build-ci: install test sf-security-checker
+build-ci: install quality test sf-security-checker
 
 # INSTALL
 install: clean-vendor clean-bin clean-composer composer-install
 
 #CODE STYLE
-quality: cs-ci
+quality: cs-ci phpstan
 
 # CLEAN for various directories used by Makefile.
 clean-vendor:
@@ -61,11 +61,14 @@ sf-security-checker:
 	php ${BIN_DIR}/security-checker security:check --ansi composer.lock
 
 # TEST
-test: quality phpunit
+test: phpunit
 
 phpunit:
 	$(call printSection,PHPUNIT)
-	${BIN_DIR}/simple-phpunit
+	${BIN_DIR}/phpunit
+
+phpstan:
+	${BIN_DIR}/phpstan.phar analyse --level=1 Client DataCollector DependencyInjection Event Exception Listener Metric Tests
 
 # QUALITY
 cs:

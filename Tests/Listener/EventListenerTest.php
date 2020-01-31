@@ -1,6 +1,6 @@
 <?php
 
-namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Client;
+namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Listener;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;

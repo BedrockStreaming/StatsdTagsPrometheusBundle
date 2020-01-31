@@ -25,6 +25,9 @@
     },
     "require-dev": {
         "m6web/php-cs-fixer-config": "^1.0",
+        "phpstan/phpstan": "^0.12.8",
+        "phpstan/phpstan-phpunit": "^0.12.6",
+        "phpunit/phpunit": "^8.5",
         "sensiolabs/security-checker": "^5.0",
         "symfony/phpunit-bridge": "^3.4 || ^4.2.3",
         "symfony/symfony": "^4.3",

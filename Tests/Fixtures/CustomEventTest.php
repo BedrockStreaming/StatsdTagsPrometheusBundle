@@ -1,6 +1,6 @@
 <?php
 
-namespace Fixtures;
+namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Fixtures;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
