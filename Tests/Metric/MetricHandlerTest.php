@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Tests\Fixtures\KernelForTest;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class MetricHandlerTest extends TestCase
@@ -279,7 +279,11 @@ class MetricHandlerTest extends TestCase
             ],
             // Increment: object Event (computed configuration tag with unknown value)
             [
-                'event' => new KernelEvent(new KernelForTest('test', false), new Request([], ['country' => 'be']), HttpKernelInterface::SUB_REQUEST),
+                'event' => new KernelEvent(
+                    $this->getMockBuilder(Kernel::class)->disableOriginalConstructor()->getMock(),
+                    new Request([], ['country' => 'be']),
+                    HttpKernelInterface::SUB_REQUEST
+                ),
                 'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',
@@ -294,7 +298,11 @@ class MetricHandlerTest extends TestCase
             ],
             // Increment: object Event (computed configuration tag)
             [
-                'event' => new KernelEvent(new KernelForTest('test', false), new Request([], ['country' => 'be']), HttpKernelInterface::SUB_REQUEST),
+                'event' => new KernelEvent(
+                    $this->getMockBuilder(Kernel::class)->disableOriginalConstructor()->getMock(),
+                    new Request([], ['country' => 'be']),
+                    HttpKernelInterface::SUB_REQUEST
+                ),
                 'request' => $defaultRequest,
                 'eventConfig' => [
                     'type' => 'increment',

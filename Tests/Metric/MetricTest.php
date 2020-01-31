@@ -512,7 +512,7 @@ class MetricTest extends TestCase
             ],
         ];
 
-        yield 'parameters-missing-from-MonitoringEventInterface' => [
+        yield 'accessors-missing-from-MonitoringEventInterface' => [
             $customEvent,
             [
                 'type' => 'increment',
