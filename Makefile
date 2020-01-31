@@ -68,7 +68,7 @@ phpunit:
 	${BIN_DIR}/phpunit
 
 phpstan:
-	${BIN_DIR}/phpstan.phar analyse
+	${BIN_DIR}/phpstan.phar analyse --level=1 Client DataCollector DependencyInjection Event Exception Listener Metric Tests
 
 # QUALITY
 cs:
