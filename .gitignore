@@ -4,5 +4,5 @@ composer.lock
 composer.install.log
 .php_cs.cache
 
-.phpunit
+.phpunit*
 phpunit.xml
