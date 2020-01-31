@@ -6,10 +6,9 @@ parameters:
     paths:
         - 'Client'
         - 'DataCollector'
-        - 'DependencyInjection'
         - 'Event'
         - 'Exception'
         - 'Listener'
         - 'Metric'
         - 'Tests'
-    level: '1'
+    level: '5'
