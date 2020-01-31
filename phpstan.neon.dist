@@ -1,0 +1,17 @@
+includes:
+    - 'vendor/phpstan/phpstan-phpunit/extension.neon'
+    - 'vendor/phpstan/phpstan-phpunit/rules.neon'
+
+parameters:
+    paths:
+        - 'Client'
+        - 'DataCollector'
+        - 'DependencyInjection'
+        - 'Event'
+        - 'Exception'
+        - 'Listener'
+        - 'Metric'
+        - 'Tests'
+    level: '2'
+    ignoreErrors:
+        - '#Parameter \#1 \$function of function call_user_func_array expects callable#'
