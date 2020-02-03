@@ -97,7 +97,7 @@ class Metric implements MetricInterface
     public function getResolvedValue(): string
     {
         if ($this->type === self::METRIC_TYPE_INCREMENT) {
-            return (string) 1;
+            return '1';
         }
         if (empty($this->paramValue)) {
             //The param value is required for every type, except for increment which is handled above.
