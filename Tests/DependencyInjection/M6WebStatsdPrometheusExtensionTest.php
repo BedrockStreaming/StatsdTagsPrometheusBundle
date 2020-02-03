@@ -134,6 +134,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
                     'clients' => [
                         'default' => [
                             'server' => 'default',
+                            'max_queued_metrics' => 100,
                             'groups' => [
                                 'groupA' => [
                                     'tags' => [
@@ -199,6 +200,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
                 [
                     'default' => [
                         'server' => 'default',
+                        'max_queued_metrics' => 100,
                         'groups' => [
                             'groupA' => [
                                 'tags' => [
