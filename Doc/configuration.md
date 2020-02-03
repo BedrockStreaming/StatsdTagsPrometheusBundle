@@ -97,8 +97,8 @@ Name of the server you want to use for that client.
 * `max_queued_metrics`: int
 
 This is the limit of metrics we can queue before sending them to the UDP server.
-Depending on your script, accumulate too many metric can cause memory leak issues. 
-We recommend you to set a value between 3000 and 5000 (you can adjust according to your infrastructure).
+Depending on your script, accumulate too many metrics can cause memory leak issues. 
+We recommend you to set a value between 500 and 1000, and test it to insure that it works with your infrastructure.
 
 * `groups` : array
 
