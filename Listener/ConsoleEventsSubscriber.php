@@ -42,7 +42,6 @@ class ConsoleEventsSubscriber implements EventSubscriberInterface
     {
         $this->startTime = microtime(true);
         $this->eventDispatcher->dispatch(
-            //ConsoleCommandMonitoringEvent::createFromConsoleEvent($event, $this->startTime)
             ConsoleCommandMonitoringEvent::fromFacade(
                 ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
             )
