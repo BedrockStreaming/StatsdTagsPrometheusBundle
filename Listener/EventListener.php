@@ -5,6 +5,7 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Listener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\PropertyAccess;
 
@@ -17,6 +18,11 @@ class EventListener
 
     /** @var MetricHandler */
     protected $metricHandler;
+
+    public function __construct(MetricHandler $metricHandler)
+    {
+        $this->metricHandler = $metricHandler;
+    }
 
     /**
      * @param object $event     Event object sent with the event dispatcher
@@ -45,6 +51,16 @@ class EventListener
         $this->metricHandler->tryToSendMetrics();
     }
 
+    public function onKernelResponse(ResponseEvent $event)
+    {
+        //We only need the master request in order to keep all the original request headers
+        //This will be used to resolve advanced configuration tags.
+        // such as '@=request.get('queryParam')'
+        if ($event->isMasterRequest()) {
+            $this->metricHandler->setRequest($event->getRequest());
+        }
+    }
+
     public function onKernelTerminate(TerminateEvent $event): void
     {
         $this->metricHandler->sendMetrics();
@@ -58,13 +74,6 @@ class EventListener
     public function addEventToListen(string $eventName, array $eventConfig): self
     {
         $this->listenedEvents[$eventName] = $eventConfig;
-
-        return $this;
-    }
-
-    public function setMetricHandler(MetricHandler $metricHandler): self
-    {
-        $this->metricHandler = $metricHandler;
 
         return $this;
     }

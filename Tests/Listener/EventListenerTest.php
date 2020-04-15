@@ -199,7 +199,6 @@ class EventListenerTest extends TestCase
 
     private function getEventListenerObject($metricHandler): EventListener
     {
-        return (new EventListener())
-            ->setMetricHandler($metricHandler);
+        return new EventListener($metricHandler);
     }
 }

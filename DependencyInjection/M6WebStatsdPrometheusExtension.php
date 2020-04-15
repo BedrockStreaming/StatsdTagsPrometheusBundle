@@ -154,6 +154,14 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
                 'priority' => -100,
             ]
         );
+        $eventListenerDefinition->addTag(
+            'kernel.event_listener',
+            [
+                'event' => KernelEvents::RESPONSE,
+                'method' => 'onKernelResponse',
+                'priority' => -100,
+            ]
+        );
         if ($this->isSymfonyConsoleComponentLoaded()) {
             // Define event listener on console terminate
             $eventListenerDefinition->addTag(
@@ -199,7 +207,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
     {
         return (new Definition(EventListener::class))
             ->setPublic(true)
-            ->addMethodCall('setMetricHandler', [
+            ->setArguments([
                 $this->getMetricHandlerDefinition($clientName, $serverName),
             ]);
     }
@@ -214,8 +222,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
             // We use it only for tags right now. That enables us to use complicated tag names
             // such as '@=container.get('kernel')'
             // See the documentation for further help
-            ->addMethodCall('setContainer', [new Reference('service_container')])
-            ->addMethodCall('setMasterRequestFromRequestStack', [new Reference('request_stack')]);
+            ->addMethodCall('setContainer', [new Reference('service_container')]);
     }
 
     protected function getMetricUdpClientDefinition(string $clientName, string $serverName): Definition
