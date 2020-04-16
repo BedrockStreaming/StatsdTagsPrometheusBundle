@@ -14,9 +14,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ConsoleEventsSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher = null;
 
     /**

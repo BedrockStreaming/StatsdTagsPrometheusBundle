@@ -6,7 +6,6 @@ use M6Web\Bundle\StatsdPrometheusBundle\Client\ClientInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class MetricHandler
 {
@@ -97,11 +96,9 @@ class MetricHandler
         $this->container = $container;
     }
 
-    public function setMasterRequestFromRequestStack(RequestStack $requestStack): void
+    public function setRequest(Request $request)
     {
-        //We only need the master request in order to keep all the original request headers
-        //This will be used to resolve advanced configuration tags.
-        $this->request = $requestStack->getMasterRequest();
+        $this->request = $request;
     }
 
     public function setMetricsQueue(\SplQueue $queue): void
