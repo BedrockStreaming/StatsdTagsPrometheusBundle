@@ -205,7 +205,7 @@ class Metric implements MetricInterface
 
         /* @see https://github.com/prometheus/statsd_exporter/pull/178/files#diff-557eb2a359922e8de5f18397fed0cd99R423 */
         if ($this->getResolvedType() === self::STATSD_TYPE_TIMER) {
-            $value =  (float)$value * 1000;
+            $value = (float) $value * 1000;
         }
 
         return (string) $value;

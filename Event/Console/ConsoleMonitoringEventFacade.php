@@ -51,7 +51,7 @@ class ConsoleMonitoringEventFacade
     protected static function getUnderscoredEventCommandName(ConsoleEvent $event): ?string
     {
         if (($command = $event->getCommand()) !== null) {
-            return str_replace(':', '_', (string)$command->getName());
+            return str_replace(':', '_', (string) $command->getName());
         }
 
         return null;
