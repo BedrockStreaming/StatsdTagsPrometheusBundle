@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ServerTest extends TestCase
 {
-    public function testGetAddressReturnsAddressWhenValidServerConfigIsGiven()
+    public function testGetAddressReturnsAddressWhenValidServerConfigIsGiven(): void
     {
         // -- Given --
         $serverName = 'default';
@@ -23,7 +23,7 @@ class ServerTest extends TestCase
         $this->assertEquals($expected, $server->getAddress());
     }
 
-    public function testGetPortReturnsPortWhenValidServerConfigIsGiven()
+    public function testGetPortReturnsPortWhenValidServerConfigIsGiven(): void
     {
         // -- Given --
         $serverName = 'default';
@@ -38,7 +38,7 @@ class ServerTest extends TestCase
         $this->assertEquals($expected, $server->getPort());
     }
 
-    public function testConstructThrowExceptionWhenBadServerConfigIsGiven()
+    public function testConstructThrowExceptionWhenBadServerConfigIsGiven(): void
     {
         // -- Expects --
         $this->expectException(ServerException::class);

@@ -2,6 +2,7 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Metric;
 
+use M6Web\Bundle\StatsdPrometheusBundle\Client\ClientInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
@@ -16,7 +17,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class MetricHandlerTest extends TestCase
 {
-    public function testGetMetricsReturnsExpectedWhenAddMetric()
+    public function testGetMetricsReturnsExpectedWhenAddMetric(): void
     {
         // -- Given --
         $metricHandler = $this->getMetricHandlerObject();
@@ -41,7 +42,7 @@ class MetricHandlerTest extends TestCase
         $this->assertEquals($expected, $metricHandler->getMetrics());
     }
 
-    public function testIsFlushMetricsQueueReturnsFalseByDefault()
+    public function testIsFlushMetricsQueueReturnsFalseByDefault(): void
     {
         // -- Given --
         $metricHandler = $this->getMetricHandlerObject();
@@ -51,7 +52,7 @@ class MetricHandlerTest extends TestCase
         $this->assertFalse($isFlushMetricsQueue);
     }
 
-    public function testIsFlushMetricsQueueReturnsTrueWhenSetFlushMetricsQueueToTrue()
+    public function testIsFlushMetricsQueueReturnsTrueWhenSetFlushMetricsQueueToTrue(): void
     {
         // -- Given --
         $metricHandler = $this->getMetricHandlerObject();
@@ -61,7 +62,7 @@ class MetricHandlerTest extends TestCase
         $this->assertTrue($metricHandler->isFlushMetricsQueue());
     }
 
-    public function testTryToSendMetricsReturnsFalseWhenFlushMetricsQueueIsFalse()
+    public function testTryToSendMetricsReturnsFalseWhenFlushMetricsQueueIsFalse(): void
     {
         // -- Given --
         $metricHandler = $this->getMetricHandlerObject();
@@ -71,7 +72,7 @@ class MetricHandlerTest extends TestCase
         $this->assertFalse($metricHandler->tryToSendMetrics());
     }
 
-    public function testTryToSendMetricsReturnsTrueWhenFlushMetricsQueueIsTrue()
+    public function testTryToSendMetricsReturnsTrueWhenFlushMetricsQueueIsTrue(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -83,7 +84,7 @@ class MetricHandlerTest extends TestCase
         $this->assertTrue($metricHandler->tryToSendMetrics());
     }
 
-    public function testClientSendLinesIsCalledWhenFlushMetricsQueueIsTrueAndQueueNotEmpty()
+    public function testClientSendLinesIsCalledWhenFlushMetricsQueueIsTrueAndQueueNotEmpty(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -97,7 +98,7 @@ class MetricHandlerTest extends TestCase
         $metricHandler->tryToSendMetrics();
     }
 
-    public function testClientSendLinesIsNotCalledWhenFlushMetricsQueueIsTrueAndQueueIsEmpty()
+    public function testClientSendLinesIsNotCalledWhenFlushMetricsQueueIsTrueAndQueueIsEmpty(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -111,7 +112,7 @@ class MetricHandlerTest extends TestCase
         $metricHandler->tryToSendMetrics();
     }
 
-    public function testClientSendLinesIsNotCalledWhenFlushMetricsQueueIsFalse()
+    public function testClientSendLinesIsNotCalledWhenFlushMetricsQueueIsFalse(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -125,7 +126,7 @@ class MetricHandlerTest extends TestCase
         $metricHandler->tryToSendMetrics();
     }
 
-    public function testClientSendLinesIsNotCalledWhenFlushMetricsQueueIsFalseAndMaxNumberNotReached()
+    public function testClientSendLinesIsNotCalledWhenFlushMetricsQueueIsFalseAndMaxNumberNotReached(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -140,7 +141,7 @@ class MetricHandlerTest extends TestCase
         $metricHandler->tryToSendMetrics();
     }
 
-    public function testIsMaxNumberReachedReturnsTrueWhenMaxNumberIsReached()
+    public function testIsMaxNumberReachedReturnsTrueWhenMaxNumberIsReached(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -152,7 +153,7 @@ class MetricHandlerTest extends TestCase
         $this->assertTrue($metricHandler->isMaxNumberOfMetricsReached());
     }
 
-    public function testIsMaxNumberReachedReturnsFalseWhenMaxNumberIsNotReached()
+    public function testIsMaxNumberReachedReturnsFalseWhenMaxNumberIsNotReached(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -164,7 +165,7 @@ class MetricHandlerTest extends TestCase
         $this->assertFalse($metricHandler->isMaxNumberOfMetricsReached());
     }
 
-    public function testHasToSendMetricsReturnsTrueWhenMaxNumberIsReached()
+    public function testHasToSendMetricsReturnsTrueWhenMaxNumberIsReached(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -176,7 +177,7 @@ class MetricHandlerTest extends TestCase
         $this->assertTrue($metricHandler->hasToSendMetrics());
     }
 
-    public function testHasToSendMetricsReturnsFalseWhenMaxNumberIsNotReached()
+    public function testHasToSendMetricsReturnsFalseWhenMaxNumberIsNotReached(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -188,7 +189,7 @@ class MetricHandlerTest extends TestCase
         $this->assertFalse($metricHandler->hasToSendMetrics());
     }
 
-    public function testHasToSendMetricsReturnsTrueWhenFlushMetricsQueueIsTrue()
+    public function testHasToSendMetricsReturnsTrueWhenFlushMetricsQueueIsTrue(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -200,7 +201,7 @@ class MetricHandlerTest extends TestCase
         $this->assertTrue($metricHandler->hasToSendMetrics());
     }
 
-    public function testHasToSendMetricsReturnsFalseWhenFlushMetricsQueueIsFalse()
+    public function testHasToSendMetricsReturnsFalseWhenFlushMetricsQueueIsFalse(): void
     {
         // -- Given --
         $client = $this->getUdpClientMock();
@@ -214,8 +215,12 @@ class MetricHandlerTest extends TestCase
 
     /**
      * @dataProvider getDataEventsWithFormattedMetrics
+     *
+     * @param Event|\Symfony\Component\EventDispatcher\Event $event
+     *
+     * @throws \M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException
      */
-    public function testGetFormattedMetricsReturnsExpected($event, Request $masterRequest, array $metricConfig, string $expectedResult)
+    public function testGetFormattedMetricsReturnsExpected($event, Request $masterRequest, array $metricConfig, string $expectedResult): void
     {
         // -- Given --
         $metric = new Metric($event, $metricConfig);
@@ -225,7 +230,7 @@ class MetricHandlerTest extends TestCase
         $this->assertSame($expectedResult, $metricHandler->getFormattedMetric($metric));
     }
 
-    protected function getMetricHandlerObject($client = null, $metricsQueue = null)
+    protected function getMetricHandlerObject(ClientInterface $client = null, \SplQueue $metricsQueue = null): MetricHandler
     {
         $metricHandler = new MetricHandler();
         if ($client) {
@@ -238,6 +243,9 @@ class MetricHandlerTest extends TestCase
         return $metricHandler;
     }
 
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject|\SplQueue
+     */
     private function getMetricsQueueMock(bool $isEmpty, int $count = 0)
     {
         $metricsQueue = $this->createMock(\SplQueue::class);
@@ -249,12 +257,15 @@ class MetricHandlerTest extends TestCase
         return $metricsQueue;
     }
 
+    /**
+     * @return UdpClient|\PHPUnit\Framework\MockObject\MockObject
+     */
     private function getUdpClientMock()
     {
         return $this->createMock(UdpClient::class);
     }
 
-    public function getDataEventsWithFormattedMetrics()
+    public function getDataEventsWithFormattedMetrics(): array
     {
         $defaultRequest = new Request([], ['country' => 'fr']);
 
