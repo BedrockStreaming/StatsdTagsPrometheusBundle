@@ -114,7 +114,7 @@ class Metric implements MetricInterface
 
         $callable = [$this->event, $this->paramValue];
         if (!is_callable($callable)) {
-            throw new \Exception('lol');
+            throw new \Exception('The event parameter is not callable');
         }
 
         return $this->correctValue(\call_user_func($callable));
