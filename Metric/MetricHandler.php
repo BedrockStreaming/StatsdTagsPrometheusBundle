@@ -81,7 +81,7 @@ class MetricHandler
         return $this;
     }
 
-    public function removeLastMetricFromQueue()
+    public function removeLastMetricFromQueue(): void
     {
         $this->metrics->dequeue();
     }
@@ -96,7 +96,7 @@ class MetricHandler
         $this->container = $container;
     }
 
-    public function setRequest(Request $request)
+    public function setRequest(Request $request): void
     {
         $this->request = $request;
     }
@@ -106,7 +106,7 @@ class MetricHandler
         $this->metrics = $queue;
     }
 
-    public function setMaxNumberOfMetricToQueue($maxNumberOfMetricToQueue): self
+    public function setMaxNumberOfMetricToQueue(int $maxNumberOfMetricToQueue): self
     {
         $this->maxNumberOfMetricToQueue = $maxNumberOfMetricToQueue;
 
@@ -166,7 +166,7 @@ class MetricHandler
      *
      * @throws MetricException
      */
-    public function getFormattedMetric(MetricInterface $metric)
+    public function getFormattedMetric(MetricInterface $metric): string
     {
         return $this->getFormattedMetricFromData([
             '%name' => $metric->getResolvedName(),

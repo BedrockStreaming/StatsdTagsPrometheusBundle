@@ -25,7 +25,7 @@ class StatsdDataCollector extends DataCollector
     /**
      * Reset the data collector to initial state
      */
-    public function reset()
+    public function reset(): void
     {
         $this->eventListeners = [];
         $this->data = [
@@ -63,7 +63,7 @@ class StatsdDataCollector extends DataCollector
     /**
      * Add a Prometheus event listener to monitor
      */
-    public function addEventListener(string $serviceId, EventListener $eventListener)
+    public function addEventListener(string $serviceId, EventListener $eventListener): void
     {
         $this->eventListeners[$serviceId] = $eventListener;
     }
@@ -75,7 +75,7 @@ class StatsdDataCollector extends DataCollector
      * @param Response   $response  The response object
      * @param \Exception $exception An exception
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, \Exception $exception = null): void
     {
     }
 
@@ -84,7 +84,7 @@ class StatsdDataCollector extends DataCollector
      *
      * @return array operations list
      */
-    public function getClients()
+    public function getClients(): array
     {
         return $this->data['clients'];
     }
@@ -94,7 +94,7 @@ class StatsdDataCollector extends DataCollector
      *
      * @return int the number of operations
      */
-    public function getOperations()
+    public function getOperations(): int
     {
         return $this->data['operations'];
     }

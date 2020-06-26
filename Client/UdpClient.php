@@ -10,7 +10,7 @@ class UdpClient implements ClientInterface
     /** @var ServerInterface */
     protected $server;
 
-    /** @var bool */
+    /** @var ?bool */
     protected $debugEnabled;
 
     public function __construct(ServerInterface $server, ?bool $debugEnabled = false)
@@ -52,7 +52,7 @@ class UdpClient implements ClientInterface
         return false;
     }
 
-    protected function getFormattedLine($line)
+    protected function getFormattedLine(string $line): string
     {
         if ($this->debugEnabled) {
             //With debug mode on, we add a carriage return to provide more readable data

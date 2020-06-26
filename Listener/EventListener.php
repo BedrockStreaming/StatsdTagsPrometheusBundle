@@ -11,6 +11,7 @@ use Symfony\Component\PropertyAccess;
 
 class EventListener
 {
+    /** @var array */
     protected $listenedEvents = [];
 
     /** @var PropertyAccess\PropertyAccessorInterface */
@@ -51,7 +52,7 @@ class EventListener
         $this->metricHandler->tryToSendMetrics();
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         //We only need the master request in order to keep all the original request headers
         //This will be used to resolve advanced configuration tags.
@@ -83,7 +84,7 @@ class EventListener
         return $this->metricHandler;
     }
 
-    public function setMaxNumberOfMetricToQueue($maxNumberOfMetricToQueue): void
+    public function setMaxNumberOfMetricToQueue(int $maxNumberOfMetricToQueue): void
     {
         $this->metricHandler->setMaxNumberOfMetricToQueue($maxNumberOfMetricToQueue);
     }

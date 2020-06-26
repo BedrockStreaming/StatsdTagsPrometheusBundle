@@ -3,6 +3,11 @@ includes:
     - 'vendor/phpstan/phpstan-phpunit/rules.neon'
 
 parameters:
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    ignoreErrors:
+        - '#Parameter \#1 \$function of function call_user_func expects callable#'
+    level: 'max'
     paths:
         - 'Client'
         - 'DataCollector'
@@ -10,5 +15,4 @@ parameters:
         - 'Exception'
         - 'Listener'
         - 'Metric'
-        - 'Tests'
-    level: '5'
+        #- 'Tests'

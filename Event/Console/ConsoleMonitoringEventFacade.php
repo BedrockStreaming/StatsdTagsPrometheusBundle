@@ -6,20 +6,20 @@ use Symfony\Component\Console\Event\ConsoleEvent;
 
 class ConsoleMonitoringEventFacade
 {
-    /** @var float|null */
+    /** @var ?float */
     private $startTime;
-    /** @var float|null */
+    /** @var ?float */
     private $executionTime;
     /** @var int */
     private $memoryPeakInBytes;
-    /** @var string */
+    /** @var ?string */
     private $commandName;
 
     public function __construct(
         ?float $startTime,
         ?float $executionTime,
         int $memoryPeakInBytes,
-        string $commandName
+        ?string $commandName
     ) {
         $this->startTime = $startTime;
         $this->executionTime = $executionTime;
@@ -51,7 +51,7 @@ class ConsoleMonitoringEventFacade
     protected static function getUnderscoredEventCommandName(ConsoleEvent $event): ?string
     {
         if (($command = $event->getCommand()) !== null) {
-            return str_replace(':', '_', $command->getName());
+            return str_replace(':', '_', (string)$command->getName());
         }
 
         return null;
@@ -77,7 +77,7 @@ class ConsoleMonitoringEventFacade
         return $this->memoryPeakInBytes;
     }
 
-    public function getCommandName(): string
+    public function getCommandName(): ?string
     {
         return $this->commandName;
     }

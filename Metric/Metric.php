@@ -150,7 +150,7 @@ class Metric implements MetricInterface
         return $resolvedTags;
     }
 
-    private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders)
+    private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders): string
     {
         foreach ($placeholders as $placeholder) {
             if ($this->event instanceof MonitoringEventInterface) {
@@ -160,7 +160,7 @@ class Metric implements MetricInterface
                 $value = $this->propertyAccessor->getValue($this->event, $placeholder);
             }
             // Replace placeholders with the associated value
-            $metricName = str_replace('<'.$placeholder.'>', $value, $metricName);
+            $metricName = (string) str_replace('<'.$placeholder.'>', $value, $metricName);
         }
 
         return $metricName;
@@ -192,6 +192,11 @@ class Metric implements MetricInterface
         }
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @throws MetricException
+     */
     private function correctValue($value): string
     {
         if (!is_numeric($value)) {
@@ -200,7 +205,7 @@ class Metric implements MetricInterface
 
         /* @see https://github.com/prometheus/statsd_exporter/pull/178/files#diff-557eb2a359922e8de5f18397fed0cd99R423 */
         if ($this->getResolvedType() === self::STATSD_TYPE_TIMER) {
-            $value = $value * 1000;
+            $value =  (float)$value * 1000;
         }
 
         return (string) $value;
