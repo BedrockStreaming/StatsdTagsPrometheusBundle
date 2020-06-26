@@ -112,7 +112,12 @@ class Metric implements MetricInterface
             throw new MetricException(\sprintf('The event class "%s" must have a "%s" method or parameters in order to measure value.', \get_class($this->event), $this->paramValue));
         }
 
-        return $this->correctValue(\call_user_func([$this->event, $this->paramValue]));
+        $callable = [$this->event, $this->paramValue];
+        if (!is_callable($callable)) {
+            throw new \Exception('lol');
+        }
+
+        return $this->correctValue(\call_user_func($callable));
     }
 
     public function getResolvedType(): string

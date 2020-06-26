@@ -5,8 +5,6 @@ includes:
 parameters:
     checkGenericClassInNonGenericObjectType: false
     checkMissingIterableValueType: false
-    ignoreErrors:
-        - '#Parameter \#1 \$function of function call_user_func expects callable#'
     level: 'max'
     paths:
         - 'Client'
