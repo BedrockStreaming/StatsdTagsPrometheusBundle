@@ -107,17 +107,13 @@ class Metric implements MetricInterface
             // Using the valid event type, values are now in parameters
             return $this->correctValue($this->event->getParameter($this->paramValue));
         }
-        if (!\method_exists($this->event, $this->paramValue)) {
+        $executableEventParamValue = [$this->event, $this->paramValue];
+        if (!is_callable($executableEventParamValue)) {
             // Legacy compatibility
             throw new MetricException(\sprintf('The event class "%s" must have a "%s" method or parameters in order to measure value.', \get_class($this->event), $this->paramValue));
         }
 
-        $callable = [$this->event, $this->paramValue];
-        if (!is_callable($callable)) {
-            throw new \Exception('The event parameter is not callable');
-        }
-
-        return $this->correctValue(\call_user_func($callable));
+        return $this->correctValue($executableEventParamValue());
     }
 
     public function getResolvedType(): string
