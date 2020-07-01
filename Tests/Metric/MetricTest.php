@@ -2,19 +2,20 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Metric;
 
-use Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
+use M6Web\Bundle\StatsdPrometheusBundle\Tests\Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MetricTest extends TestCase
 {
     /**
      * @dataProvider dataProviderGetMetricsName
      */
-    public function testGetResolvedNameReturnsExpected($event, $metricConfig, $expectedResult)
+    public function testGetResolvedNameReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
         // -- Given --
         $metric = new Metric($event, $metricConfig);
@@ -22,7 +23,7 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedName());
     }
 
-    public function dataProviderGetMetricsName()
+    public function dataProviderGetMetricsName(): array
     {
         return [
             [
@@ -51,7 +52,7 @@ class MetricTest extends TestCase
     /**
      * @dataProvider dataProviderGetMetricsType
      */
-    public function testGetResolvedTypeReturnsExpected($event, $metricConfig, $expectedResult)
+    public function testGetResolvedTypeReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
         // -- Given --
         $metric = new Metric($event, $metricConfig);
@@ -59,7 +60,7 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedType());
     }
 
-    public function dataProviderGetMetricsType()
+    public function dataProviderGetMetricsType(): array
     {
         return [
             [
@@ -108,15 +109,15 @@ class MetricTest extends TestCase
     /**
      * @dataProvider dataProviderGetMetricsValue
      */
-    public function testGetResolvedValueReturnsExpected($event, $metricConfig, $expectedResult)
+    public function testGetResolvedValueReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
-        // -- Given --
+        // -- Given --TestMonitoringEvent
         $metric = new Metric($event, $metricConfig);
         // -- Expects
         $this->assertSame($expectedResult, $metric->getResolvedValue());
     }
 
-    public function dataProviderGetMetricsValue()
+    public function dataProviderGetMetricsValue(): array
     {
         return [
             'increment value' => [
@@ -174,8 +175,8 @@ class MetricTest extends TestCase
                 '12045465',
             ],
             'custom value from object' => [
-                new class() {
-                    public function getCustomValue()
+                new class() extends Event {
+                    public function getCustomValue(): int
                     {
                         return 10;
                     }
@@ -190,8 +191,8 @@ class MetricTest extends TestCase
                 '10',
             ],
             'custom value from object corrected by 1000' => [
-                new class() {
-                    public function getCustomValue()
+                new class() extends Event {
+                    public function getCustomValue(): float
                     {
                         return 10.002;
                     }
@@ -217,8 +218,8 @@ class MetricTest extends TestCase
                 '0',
             ],
             'custom value from object return null' => [
-                new class() {
-                    public function getCustomValue()
+                new class() extends Event {
+                    public function getCustomValue(): ?int
                     {
                         return null;
                     }
@@ -238,7 +239,7 @@ class MetricTest extends TestCase
     /**
      * @dataProvider dataProviderGetMetricsTag
      */
-    public function testGetResolvedTagsReturnsExpected($event, array $metricConfig, array $resolvers, array $expectedResult)
+    public function testGetResolvedTagsReturnsExpected(Event $event, array $metricConfig, array $resolvers, array $expectedResult): void
     {
         // -- Given --
         $metric = new Metric($event, $metricConfig);
@@ -512,7 +513,7 @@ class MetricTest extends TestCase
             ],
         ];
 
-        yield 'parameters-missing-from-MonitoringEventInterface' => [
+        yield 'accessors-missing-from-MonitoringEventInterface' => [
             $customEvent,
             [
                 'type' => 'increment',

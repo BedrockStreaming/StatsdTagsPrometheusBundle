@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('prefix')->end()
                     ->end()
+                ->end()
             ->end();
     }
 

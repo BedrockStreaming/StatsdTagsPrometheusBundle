@@ -15,26 +15,33 @@ define printSection
 endef
 
 # BUILD
-build: install test cs-ci sf-security-checker
+.PHONY: build
+build: install quality test sf-security-checker
 
 # BUILD CI
-build-ci: install test sf-security-checker
+.PHONY: build-ci
+build-ci: install quality test sf-security-checker
 
 # INSTALL
+.PHONY: install
 install: clean-vendor clean-bin clean-composer composer-install
 
 #CODE STYLE
-quality: cs-ci
+.PHONY: quality
+quality: cs-ci phpstan
 
 # CLEAN for various directories used by Makefile.
+.PHONY: clean-vendor
 clean-vendor:
 	$(call printSection,CLEAN-VENDOR)
 	rm -rf ${SOURCE_DIR}/vendor
 
+.PHONY: clean-bin
 clean-bin:
 	$(call printSection,CLEAN-BIN)
 	rm -rf ${SOURCE_DIR}/bin
 
+.PHONY: clean-composer
 clean-composer:
 	$(call printSection,CLEAN-COMPOSER)
 	rm -rf ${SOURCE_DIR}/composer
@@ -49,6 +56,7 @@ ${COMPOSER_BIN}:
 	chmod 755 ${COMPOSER_BIN}
 	[ -L ${SOURCE_DIR}/composer.phar ] || ln -s ${COMPOSER_DIR}/composer.phar ${SOURCE_DIR}/composer.phar
 
+.PHONY: composer-install
 composer-install: ${SOURCE_DIR}/composer.install.log
 
 ${SOURCE_DIR}/composer.install.log: ${COMPOSER_BIN}
@@ -56,26 +64,36 @@ ${SOURCE_DIR}/composer.install.log: ${COMPOSER_BIN}
 	$< --no-interaction install --ansi --no-progress --prefer-dist 2>&1 | tee ${SOURCE_DIR}/composer.install.log
 
 # SECURITY CHECKER
+.PHONY: sf-security-checker
 sf-security-checker:
 	$(call printSection,COMPOSER-SECURITY-CHECKER)
 	php ${BIN_DIR}/security-checker security:check --ansi composer.lock
 
 # TEST
-test: quality phpunit
+.PHONY: test
+test: phpunit
 
+.PHONY: phpunit
 phpunit:
 	$(call printSection,PHPUNIT)
-	${BIN_DIR}/simple-phpunit
+	${BIN_DIR}/phpunit
+
+.PHONY: phpstan
+phpstan:
+	${BIN_DIR}/phpstan.phar analyse
 
 # QUALITY
+.PHONY: cs
 cs:
 	$(call printSection,CS)
 	${BIN_DIR}/php-cs-fixer fix --ansi --dry-run --stop-on-violation --diff
 
+.PHONY: cs-fix
 cs-fix:
 	$(call printSection,CS-fix)
 	${BIN_DIR}/php-cs-fixer fix --ansi
 
+.PHONY: cs-ci
 cs-ci:
 	$(call printSection,CS-CI)
 	${BIN_DIR}/php-cs-fixer fix --ansi --dry-run --using-cache=no --verbose

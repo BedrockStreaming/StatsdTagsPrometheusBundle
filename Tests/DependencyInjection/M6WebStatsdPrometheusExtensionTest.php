@@ -21,7 +21,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     /**
      * @dataProvider dataProviderForGetServersReturnsExpectation
      */
-    public function testGetServersReturnsExpectation(array $config, array $expected)
+    public function testGetServersReturnsExpectation(array $config, array $expected): void
     {
         // -- When --
         $this->extension->load([$config], $this->container);
@@ -32,7 +32,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     /**
      * @dataProvider dataProviderForGetClientsReturnsExpectation
      */
-    public function testGetClientsReturnsExpectation(array $config, array $expected)
+    public function testGetClientsReturnsExpectation(array $config, array $expected): void
     {
         // -- When --
         $this->extension->load([$config], $this->container);
@@ -43,7 +43,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testLoadCorrectTagsConfigurationDoesNoesNotThrowException()
+    public function testLoadCorrectTagsConfigurationDoesNoesNotThrowException(): void
     {
         // -- Given --
         $config = [
@@ -58,7 +58,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         $this->extension->load([$config], $this->container);
     }
 
-    public function testLoadWrongTagsConfigurationDoesThrowsException()
+    public function testLoadWrongTagsConfigurationDoesThrowsException(): void
     {
         // -- Given --
         $config = [
@@ -75,7 +75,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testLoadCorrectYmlConfigurationFileDoesNotThrowException()
+    public function testLoadCorrectYmlConfigurationFileDoesNotThrowException(): void
     {
         // -- Given --
         $config = Yaml::parseFile(__DIR__.'/../Fixtures/CorrectConfigurationFileTest.yml');
@@ -85,7 +85,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         $this->extension->load([$config[M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY]], $this->container);
     }
 
-    public function testLoadWrongYmlConfigurationFileThrowsException()
+    public function testLoadWrongYmlConfigurationFileThrowsException(): void
     {
         // -- Given --
         $config = Yaml::parseFile(__DIR__.'/../Fixtures/WrongConfigurationFileTest.yml');
@@ -119,7 +119,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         ];
     }
 
-    public function dataProviderForGetClientsReturnsExpectation()
+    public function dataProviderForGetClientsReturnsExpectation(): array
     {
         return [
             'test1' => [

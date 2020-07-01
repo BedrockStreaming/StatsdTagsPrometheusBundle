@@ -1,39 +1,38 @@
 <?php
 
-namespace Fixtures;
+namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Fixtures;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
 class CustomEventTest extends Event
 {
+    /** @var float|null */
     private $value;
+
+    /** @var string|null */
     private $placeHolder1;
+
+    /** @var string|null */
     private $placeHolder2;
 
-    public function __construct($value, $placeHolder1 = null, $placeHolder2 = null)
+    public function __construct(?float $value, string $placeHolder1 = null, string $placeHolder2 = null)
     {
         $this->value = $value;
         $this->placeHolder1 = $placeHolder1;
         $this->placeHolder2 = $placeHolder2;
     }
 
-    public function getValue()
+    public function getValue(): ?float
     {
         return $this->value;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPlaceHolder1()
+    public function getPlaceHolder1(): ?string
     {
         return $this->placeHolder1;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPlaceHolder2()
+    public function getPlaceHolder2(): ?string
     {
         return $this->placeHolder2;
     }

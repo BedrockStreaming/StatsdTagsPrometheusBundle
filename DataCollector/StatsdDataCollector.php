@@ -8,6 +8,7 @@ use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -24,7 +25,7 @@ class StatsdDataCollector extends DataCollector
     /**
      * Reset the data collector to initial state
      */
-    public function reset()
+    public function reset(): void
     {
         $this->eventListeners = [];
         $this->data = [
@@ -33,14 +34,9 @@ class StatsdDataCollector extends DataCollector
         ];
     }
 
-    /**
-     * Kernel event
-     *
-     * @param \Symfony\Component\EventDispatcher\Event|Event $event The received event
-     */
-    public function onKernelResponse($event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
-        if (HttpKernelInterface::MASTER_REQUEST == $event->getRequestType()) {
+        if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
             foreach ($this->eventListeners as $serviceId => $eventListener) {
                 $clientInfo = [
                     'name' => $serviceId,
@@ -67,7 +63,7 @@ class StatsdDataCollector extends DataCollector
     /**
      * Add a Prometheus event listener to monitor
      */
-    public function addEventListener(string $serviceId, EventListener $eventListener)
+    public function addEventListener(string $serviceId, EventListener $eventListener): void
     {
         $this->eventListeners[$serviceId] = $eventListener;
     }
@@ -79,7 +75,7 @@ class StatsdDataCollector extends DataCollector
      * @param Response   $response  The response object
      * @param \Exception $exception An exception
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, \Exception $exception = null): void
     {
     }
 
@@ -88,7 +84,7 @@ class StatsdDataCollector extends DataCollector
      *
      * @return array operations list
      */
-    public function getClients()
+    public function getClients(): array
     {
         return $this->data['clients'];
     }
@@ -98,7 +94,7 @@ class StatsdDataCollector extends DataCollector
      *
      * @return int the number of operations
      */
-    public function getOperations()
+    public function getOperations(): int
     {
         return $this->data['operations'];
     }

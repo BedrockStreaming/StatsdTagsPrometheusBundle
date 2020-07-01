@@ -1,0 +1,16 @@
+includes:
+    - 'vendor/phpstan/phpstan-phpunit/extension.neon'
+    - 'vendor/phpstan/phpstan-phpunit/rules.neon'
+
+parameters:
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    level: 'max'
+    paths:
+        - 'Client'
+        - 'DataCollector'
+        - 'Event'
+        - 'Exception'
+        - 'Listener'
+        - 'Metric'
+        - 'Tests'

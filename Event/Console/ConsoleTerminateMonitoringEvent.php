@@ -2,6 +2,12 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\Event\Console;
 
-class ConsoleTerminateMonitoringEvent extends AbstractConsoleMonitoringEvent
+use M6Web\Bundle\StatsdPrometheusBundle\Event\AbstractMonitoringEvent;
+
+class ConsoleTerminateMonitoringEvent extends AbstractMonitoringEvent
 {
+    public static function fromFacade(ConsoleMonitoringEventFacade $facade): ConsoleTerminateMonitoringEvent
+    {
+        return new self($facade->toMonitoringArray());
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Client;
+namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Listener;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class EventListenerTest extends TestCase
 {
-    public function testSetFlushMetricsQueueIsAlwaysCalledWhenHandledEventIsSentInHandleEvent()
+    public function testSetFlushMetricsQueueIsAlwaysCalledWhenHandledEventIsSentInHandleEvent(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -36,7 +36,7 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    public function testSetFlushMetricsQueueIsNotCalledWhenNotHandledEventIsSentInHandleEvent()
+    public function testSetFlushMetricsQueueIsNotCalledWhenNotHandledEventIsSentInHandleEvent(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -51,7 +51,7 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    public function testAddMetricToQueueFunctionIsCalledOnceWhenHandledEventWithOneMetricIsSentInHandleEventFunction()
+    public function testAddMetricToQueueFunctionIsCalledOnceWhenHandledEventWithOneMetricIsSentInHandleEventFunction(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -78,7 +78,7 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    public function testAddMetricToQueueFunctionIsCalledTwiceWhenHandledEventWithTwoMetricsIsSentInHandleEventFunction()
+    public function testAddMetricToQueueFunctionIsCalledTwiceWhenHandledEventWithTwoMetricsIsSentInHandleEventFunction(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -112,7 +112,7 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    public function testAddMetricToQueueFunctionIsNotCalledTwiceWhenHandledEventWithNoMetricIsSentInHandleEventFunction()
+    public function testAddMetricToQueueFunctionIsNotCalledTwiceWhenHandledEventWithNoMetricIsSentInHandleEventFunction(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -132,7 +132,7 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    public function testAddMetricToQueueFunctionIsNotCalledTwiceWhenNotHandledEventIsSentInHandleEventFunction()
+    public function testAddMetricToQueueFunctionIsNotCalledTwiceWhenNotHandledEventIsSentInHandleEventFunction(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -147,7 +147,7 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    public function testTryToSendMetricsFunctionIsCalledOnceWhenHandledEventIsSent()
+    public function testTryToSendMetricsFunctionIsCalledOnceWhenHandledEventIsSent(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -174,7 +174,7 @@ class EventListenerTest extends TestCase
         $eventListener->handleEvent($monitoringEvent, $eventName);
     }
 
-    public function testTryToSendMetricsFunctionIsNotCalledOnceWhenNotHandledEventIsSent()
+    public function testTryToSendMetricsFunctionIsNotCalledOnceWhenNotHandledEventIsSent(): void
     {
         // -- Given --
         $monitoringEvent = new TestMonitoringEvent();
@@ -190,14 +190,14 @@ class EventListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MetricHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getMetricHandlerMock()
     {
         return $this->createMock(MetricHandler::class);
     }
 
-    private function getEventListenerObject($metricHandler): EventListener
+    private function getEventListenerObject(MetricHandler $metricHandler): EventListener
     {
         return new EventListener($metricHandler);
     }

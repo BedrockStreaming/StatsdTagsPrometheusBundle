@@ -6,6 +6,7 @@ use M6Web\Bundle\StatsdPrometheusBundle\Event\MonitoringEventInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Metric implements MetricInterface
 {
@@ -22,7 +23,7 @@ class Metric implements MetricInterface
     const TAG_PROPERTY_ACCESSOR = '->';
     const TAG_PARAMETER_KEY = '%=';
 
-    /** @var PropertyAccess */
+    /** @var PropertyAccessor */
     protected $propertyAccessor;
 
     /** @var object */
@@ -96,7 +97,7 @@ class Metric implements MetricInterface
     public function getResolvedValue(): string
     {
         if ($this->type === self::METRIC_TYPE_INCREMENT) {
-            return 1;
+            return '1';
         }
         if (empty($this->paramValue)) {
             //The param value is required for every type, except for increment which is handled above.
@@ -106,12 +107,13 @@ class Metric implements MetricInterface
             // Using the valid event type, values are now in parameters
             return $this->correctValue($this->event->getParameter($this->paramValue));
         }
-        if (!\method_exists($this->event, $this->paramValue)) {
+        $executableEventParamValue = [$this->event, $this->paramValue];
+        if (!is_callable($executableEventParamValue)) {
             // Legacy compatibility
             throw new MetricException(\sprintf('The event class "%s" must have a "%s" method or parameters in order to measure value.', \get_class($this->event), $this->paramValue));
         }
 
-        return $this->correctValue(\call_user_func([$this->event, $this->paramValue]));
+        return $this->correctValue($executableEventParamValue());
     }
 
     public function getResolvedType(): string
@@ -136,7 +138,7 @@ class Metric implements MetricInterface
         // Add global parameters (configured in client or group)
         foreach (array_merge($this->configurationTags, $this->tags) as $tagName => $tagValue) {
             $resolvedTag = $this->resolveTagValue(
-                // By default (~), we look for the parameter with the same name as the tag.
+            // By default (~), we look for the parameter with the same name as the tag.
                 !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY.$tagName,
                 $resolvers
             );
@@ -149,7 +151,7 @@ class Metric implements MetricInterface
         return $resolvedTags;
     }
 
-    private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders)
+    private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders): string
     {
         foreach ($placeholders as $placeholder) {
             if ($this->event instanceof MonitoringEventInterface) {
@@ -159,7 +161,7 @@ class Metric implements MetricInterface
                 $value = $this->propertyAccessor->getValue($this->event, $placeholder);
             }
             // Replace placeholders with the associated value
-            $metricName = str_replace('<'.$placeholder.'>', $value, $metricName);
+            $metricName = (string) str_replace('<'.$placeholder.'>', $value, $metricName);
         }
 
         return $metricName;
@@ -191,6 +193,11 @@ class Metric implements MetricInterface
         }
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @throws MetricException
+     */
     private function correctValue($value): string
     {
         if (!is_numeric($value)) {
@@ -199,7 +206,7 @@ class Metric implements MetricInterface
 
         /* @see https://github.com/prometheus/statsd_exporter/pull/178/files#diff-557eb2a359922e8de5f18397fed0cd99R423 */
         if ($this->getResolvedType() === self::STATSD_TYPE_TIMER) {
-            $value = $value * 1000;
+            $value = (float) $value * 1000;
         }
 
         return (string) $value;
