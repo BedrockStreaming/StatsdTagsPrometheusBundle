@@ -11,7 +11,7 @@ class KernelExceptionMonitoringEvent extends AbstractMonitoringEvent
     public static function createFromKernelExceptionEvent(ExceptionEvent $event): self
     {
         $statusCode = 500;
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         if ($exception instanceof HttpExceptionInterface) {
             $statusCode = $exception->getStatusCode();
         }
