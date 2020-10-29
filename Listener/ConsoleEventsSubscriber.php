@@ -3,6 +3,7 @@
 namespace M6Web\Bundle\StatsdPrometheusBundle\Listener;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleCommandMonitoringEvent;
+use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleErrorMonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleExceptionMonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleMonitoringEventFacade;
 use M6Web\Bundle\StatsdPrometheusBundle\Event\Console\ConsoleTerminateMonitoringEvent;
@@ -53,7 +54,7 @@ class ConsoleEventsSubscriber implements EventSubscriberInterface
         if ($event->getExitCode() != 0) {
             // For non-0 exit command, fire an ERROR event
             $this->eventDispatcher->dispatch(
-                ConsoleCommandMonitoringEvent::fromFacade(
+                ConsoleErrorMonitoringEvent::fromFacade(
                     ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
                 )
             );
