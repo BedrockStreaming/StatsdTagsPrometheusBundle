@@ -483,7 +483,7 @@ m6web_statsd_prometheus:
             groups:
                 default_group:
                     events:
-                        statsdprometheus.kernel.terminate:
+                        M6Web\Bundle\StatsdPrometheusBundle\Event\Kernel\KernelTerminateMonitoringEvent:
                             metrics:
                                 -   type: 'increment'
                                     #project name and dynamics values are removed here for the metric name
@@ -496,12 +496,12 @@ m6web_statsd_prometheus:
                                     #project name and dynamics values are removed here for the metric name
                                     #we also provide a better name according to the naming convention
                                     name: 'http_request_input_seconds' 
-                                    param_value: 'getTiming'
+                                    param_value: 'timing'
                                     tags: #dynamic values are set in tags
                                         route: ~
                                         host: ~
                                         status: ~
-                        statsdprometheus.kernel.exception:
+                        M6Web\Bundle\StatsdPrometheusBundle\Event\Kernel\KernelExceptionMonitoringEvent:
                             metrics:
                                 -   type: 'increment'                                                                    
                                     #we provide a better name according to the naming convention
