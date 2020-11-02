@@ -216,9 +216,7 @@ class MetricHandlerTest extends TestCase
     /**
      * @dataProvider getDataEventsWithFormattedMetrics
      *
-     * @param Event|\Symfony\Component\EventDispatcher\Event $event
-     *
-     * @throws \M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException
+     * @param Event|KernelEvent $event
      */
     public function testGetFormattedMetricsReturnsExpected($event, Request $masterRequest, array $metricConfig, string $expectedResult): void
     {

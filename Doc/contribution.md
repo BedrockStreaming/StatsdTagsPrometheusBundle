@@ -1,28 +1,24 @@
 # Contribution
 
-## Contribution
+## Useful commands
 
-(:warning: Work in progress)
-
-## Run Unit Tests
-
-This projects is given with unit testing and code style checking.
-
-Run code style checking :
+Install project and run all checks and tests (your PR should be green if this command is successful):
 ```bash
-make php-cs
-make php-ci
+make build
 ```
 
-Run tests with phpunit :
+Run quality checks:
 ```bash
-make phpunit
+make quality
 ```
 
-Run both code style checking and unit tests:
+Run tests:
 ```bash
 make test
 ```
 
+## Useful links
+
+* [Install a local statsd_exporter using docker](https://github.com/prometheus/statsd_exporter#using-docker)
 
 [Go back](../README.md)
