@@ -76,7 +76,7 @@ test: phpunit
 .PHONY: phpunit
 phpunit:
 	$(call printSection,PHPUNIT)
-	${BIN_DIR}/phpunit
+	${BIN_DIR}/simple-phpunit
 
 .PHONY: phpstan
 phpstan:

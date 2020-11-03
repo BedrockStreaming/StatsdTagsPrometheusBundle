@@ -4,18 +4,9 @@ Statsd Bundle for Prometheus.
 
 ## Features
 
-* Bind any event to increment metrics, set gauges and collect timers
+* Dispatch events to increment metrics, set gauges and collect timers
 * Send Statsd metrics ([DogStatsD](https://docs.datadoghq.com/developers/dogstatsd/) format)
-* Version 1.6 is compatible with Prometheus 
-(converted with [statsd_exporter](https://github.com/prometheus/statsd_exporter))
-* Version 2+ adds new features and the configuration changed a bit, [see upgrade doc](Doc/upgrades/from-1-to-2.md)
-* Version 3+ adds compatibility with psr 14 about event dispatcher and use specialized events without names, [see upgrade doc](Doc/upgrades/from-2-to-3.md)
-* Handle Prometheus tags in the metrics  
- 
-## Requirements
-
-- Symfony ≥3.4
-- Php ≥7.1
+* Handle Prometheus tags in the metrics
 
 ## How to use the bundle
 
@@ -23,18 +14,16 @@ Statsd Bundle for Prometheus.
 2. Then, see how to [Configure the bundle](Doc/configuration.md)
 3. Then, have a look at the [Usage and code examples](Doc/usage-and-examples.md) documentation
 
-## Contribution & Tests
+## Noticeable versions and migration guides
 
-* See [Contribution & tests](Doc/contribution.md) (:warning: Work in progress).
-* Install a local statsd_exporter using docker:
-[https://github.com/prometheus/statsd_exporter#using-docker](https://github.com/prometheus/statsd_exporter#using-docker)
+* Version 1.6 is compatible with Prometheus 
+(converted with [statsd_exporter](https://github.com/prometheus/statsd_exporter))
+* Version 2+ adds new features, and the configuration changed a bit, [see upgrade doc](Doc/upgrades/from-1-to-2.md)
+* Version 3+ adds compatibility with psr 14 about event dispatcher and use specialized events without names, [see upgrade doc](Doc/upgrades/from-2-to-3.md)
 
-## Credits
+## Contribution
 
-Bundle provided by the M6Web open source initiative.
-
-Our blog : http://tech.m6web.fr/ (french)
-and twitter : https://twitter.com/TechM6Web (french)
+* See [Contribution](Doc/contribution.md)
 
 ## License
 
