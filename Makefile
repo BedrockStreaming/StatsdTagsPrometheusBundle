@@ -16,11 +16,7 @@ endef
 
 # BUILD
 .PHONY: build
-build: install quality test sf-security-checker
-
-# BUILD CI
-.PHONY: build-ci
-build-ci: install quality test sf-security-checker
+build: install test quality sf-security-checker
 
 # INSTALL
 .PHONY: install
@@ -44,7 +40,6 @@ clean-bin:
 .PHONY: clean-composer
 clean-composer:
 	$(call printSection,CLEAN-COMPOSER)
-	rm -rf ${SOURCE_DIR}/composer
 	rm -f ${SOURCE_DIR}/composer.install.log
 	rm -f ${SOURCE_DIR}/composer.lock
 
@@ -78,8 +73,10 @@ phpunit:
 	$(call printSection,PHPUNIT)
 	${BIN_DIR}/simple-phpunit
 
+vendor/bin/.phpunit: phpunit
+
 .PHONY: phpstan
-phpstan:
+phpstan: vendor/bin/.phpunit
 	${BIN_DIR}/phpstan.phar analyse
 
 # QUALITY
