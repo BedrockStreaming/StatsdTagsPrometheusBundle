@@ -276,13 +276,13 @@ Configure the dispatched events
 ------
 
 By default, this bundle will dispatch useful monitoring events (see what [KernelTerminateMonitoringEvent](Event/Kernel/KernelTerminateMonitoringEvent.php) contains for example), 
-here is how you can customize the bundle dispatched events:
+here is how you can customize this behaviour:
 
 ```yaml
 m6web_statsd_prometheus:
     dispatched_events:
         http:
-            enable: false # true by default, use false if you don't want the bundle to dispatch KernelTerminateMonitoringEvent and KernelExceptionMonitoringEvent events
+            enable: true # use false if you don't want the bundle to dispatch http monitoring events at all
 
             # customize KernelTerminateMonitoringEvent dispatch rules
             M6Web\Bundle\StatsdPrometheusBundle\Event\Kernel\KernelTerminateMonitoringEvent:
@@ -297,7 +297,7 @@ m6web_statsd_prometheus:
                     - my_route_attribute_name
 
         console:
-            enable: false # true by default, use false if you don't want the bundle to dispatch ConsoleCommandMonitoringEvent events
+            enable: true # use false if you don't want the bundle to dispatch console monitoring events at all
 ```
  
 Configure the tags
