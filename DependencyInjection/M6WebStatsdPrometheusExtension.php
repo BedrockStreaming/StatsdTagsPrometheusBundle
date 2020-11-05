@@ -5,6 +5,8 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\DependencyInjection;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\Server;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\DataCollector\StatsdDataCollector;
+use M6Web\Bundle\StatsdPrometheusBundle\Event\Kernel\KernelExceptionMonitoringEvent;
+use M6Web\Bundle\StatsdPrometheusBundle\Event\Kernel\KernelTerminateMonitoringEvent;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\ConsoleEventsSubscriber;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\KernelEventsSubscriber;
@@ -39,6 +41,9 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
     /** @var array */
     private $tags;
 
+    /** @var array */
+    private $dispatchedEvents;
+
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
         $this->container = $container;
@@ -47,6 +52,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
         $this->servers = $config['servers'] ?? [];
         $this->clients = $config['clients'] ?? [];
         $this->tags = $config['tags'] ?? [];
+        $this->dispatchedEvents = $config['dispatched_events'];
 
         foreach ($this->clients as $alias => $clientConfig) {
             $this->clientServiceIds[] = $this->setEventListenerAsServiceAndGetServiceId(
@@ -248,12 +254,23 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 
     protected function registerKernelEventsSubscriber(): void
     {
-        $this->container->autowire(KernelEventsSubscriber::class)->setAutoconfigured(true);
+        if (!$this->dispatchedEvents['http']['enable']) {
+            return;
+        }
+
+        $this->container->autowire(KernelEventsSubscriber::class)
+            ->setAutoconfigured(true)
+            ->setArgument('$routesForWhichKernelTerminateEventWontBeDispatched', $this->dispatchedEvents['http'][KernelTerminateMonitoringEvent::class]['dispatch_except_for_routes'])
+            ->setArgument('$routesForWhichKernelExceptionEventWontBeDispatched', $this->dispatchedEvents['http'][KernelExceptionMonitoringEvent::class]['dispatch_except_for_routes'])
+        ;
     }
 
     protected function registerConsoleEventsSubscriber(): void
     {
-        if (!$this->isSymfonyConsoleComponentLoaded()) {
+        if (
+            !$this->dispatchedEvents['console']['enable']
+            || !$this->isSymfonyConsoleComponentLoaded()
+        ) {
             return;
         }
 

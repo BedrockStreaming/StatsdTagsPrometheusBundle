@@ -2,6 +2,8 @@
 
 namespace M6Web\Bundle\StatsdPrometheusBundle\DependencyInjection;
 
+use M6Web\Bundle\StatsdPrometheusBundle\Event\Kernel\KernelExceptionMonitoringEvent;
+use M6Web\Bundle\StatsdPrometheusBundle\Event\Kernel\KernelTerminateMonitoringEvent;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -17,6 +19,7 @@ class Configuration implements ConfigurationInterface
         $this->addServersSection($rootNode);
         $this->addClientsSection($rootNode);
         $this->addTagsSection($rootNode);
+        $this->addDispatchedEventsSection($rootNode);
         $this->addDefaultEventSection($rootNode);
 
         return $treeBuilder;
@@ -94,6 +97,53 @@ class Configuration implements ConfigurationInterface
                 ->end();
     }
 
+    private function addDispatchedEventsSection(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('dispatched_events')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('http')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('enable')
+                                    ->defaultValue(true)
+                                ->end()
+                                ->arrayNode(KernelTerminateMonitoringEvent::class)
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->arrayNode('dispatch_except_for_routes')
+                                            ->prototype('scalar')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode(KernelExceptionMonitoringEvent::class)
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->arrayNode('dispatch_except_for_routes')
+                                            ->prototype('scalar')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('console')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('enable')
+                                    ->defaultValue(true)
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * @TODO: delete these unused "base_collectors" and "console_events" root keys in the next major release
+     */
     private function addDefaultEventSection(ArrayNodeDefinition $rootNode): void
     {
         $rootNode

@@ -17,6 +17,12 @@ class KernelEventsSubscriber implements EventSubscriberInterface
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
+    /** @var array */
+    private $routesForWhichKernelTerminateEventWontBeDispatched;
+
+    /** @var array */
+    private $routesForWhichKernelExceptionEventWontBeDispatched;
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -25,13 +31,22 @@ class KernelEventsSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(EventDispatcherInterface $dispatcher)
-    {
+    public function __construct(
+        EventDispatcherInterface $dispatcher,
+        array $routesForWhichKernelTerminateEventWontBeDispatched,
+        array $routesForWhichKernelExceptionEventWontBeDispatched
+    ) {
         $this->dispatcher = $dispatcher;
+        $this->routesForWhichKernelTerminateEventWontBeDispatched = $routesForWhichKernelTerminateEventWontBeDispatched;
+        $this->routesForWhichKernelExceptionEventWontBeDispatched = $routesForWhichKernelExceptionEventWontBeDispatched;
     }
 
     public function onKernelTerminate(TerminateEvent $event): void
     {
+        if (\in_array($event->getRequest()->attributes->get('_route'), $this->routesForWhichKernelTerminateEventWontBeDispatched, true)) {
+            return;
+        }
+
         $this->dispatcher->dispatch(
             KernelTerminateMonitoringEvent::createFromKernelTerminateEvent($event)
         );
@@ -39,10 +54,15 @@ class KernelEventsSubscriber implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        if ($event->isMasterRequest()) {
-            $this->dispatcher->dispatch(
-                KernelExceptionMonitoringEvent::createFromKernelExceptionEvent($event)
-            );
+        if (
+            !$event->isMasterRequest()
+            || \in_array($event->getRequest()->attributes->get('_route'), $this->routesForWhichKernelExceptionEventWontBeDispatched, true)
+        ) {
+            return;
         }
+
+        $this->dispatcher->dispatch(
+            KernelExceptionMonitoringEvent::createFromKernelExceptionEvent($event)
+        );
     }
 }
