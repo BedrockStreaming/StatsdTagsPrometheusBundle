@@ -21,8 +21,6 @@ class UdpClient implements ClientInterface
 
     /**
      * Split metrics to send them group by group
-     *
-     * @param array $lines
      */
     public function sendLines(array $lines): void
     {

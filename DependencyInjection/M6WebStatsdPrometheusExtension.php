@@ -120,10 +120,6 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 
     /**
      * Add the "kernel event listener" tag on the given event listener service definition
-     *
-     * @param Definition $eventListenerDefinition
-     * @param array      $groupConfig
-     * @param array      $tagsConfig
      */
     protected function addEventListenerTagsOnServiceDefinition(Definition $eventListenerDefinition, array $groupConfig, array $tagsConfig): void
     {
@@ -231,11 +227,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
     {
         // No server found.
         if (!\array_key_exists($serverName, $this->servers)) {
-            throw new InvalidConfigurationException(sprintf(
-                'M6WebStatsd client %s used server %s which is not defined in the servers section',
-                $clientName,
-                $serverName
-            ));
+            throw new InvalidConfigurationException(sprintf('M6WebStatsd client %s used server %s which is not defined in the servers section', $clientName, $serverName));
         }
         // Matched server configurations.
         return new Definition(Server::class, [

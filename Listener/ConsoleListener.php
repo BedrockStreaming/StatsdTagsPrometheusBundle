@@ -9,9 +9,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ConsoleListener
 {
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher = null;
 
     /**
