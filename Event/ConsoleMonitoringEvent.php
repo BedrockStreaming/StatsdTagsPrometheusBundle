@@ -11,7 +11,7 @@ class ConsoleMonitoringEvent extends MonitoringEvent
     const ERROR = 'statsdprometheus.console.error';
     const EXCEPTION = 'statsdprometheus.console.exception';
 
-    public static function createFromConsoleEvent(ConsoleEvent $event, int $startTime = 0)
+    public static function createFromConsoleEvent(ConsoleEvent $event, ?int $startTime = 0)
     {
         $executionTime = !is_null($startTime) ? microtime(true) - $startTime : null;
 

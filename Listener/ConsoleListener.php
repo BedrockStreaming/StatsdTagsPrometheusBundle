@@ -17,7 +17,7 @@ class ConsoleListener
     /**
      * Time when command started
      *
-     * @var float
+     * @var ?float
      */
     protected $startTime = null;
 
