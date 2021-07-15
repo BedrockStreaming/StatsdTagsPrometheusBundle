@@ -26,8 +26,6 @@ interface MetricInterface
      *                         ['resolver1' => $resolver1]
      *                         Used to inject services in tag names:
      *                         format: '@=my_service.myFunction()'
-     *
-     * @return array
      */
     public function getResolvedTags(array $resolvers): array;
 }

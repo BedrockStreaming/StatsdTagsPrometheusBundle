@@ -9,15 +9,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ConsoleListener
 {
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher = null;
 
     /**
      * Time when command started
      *
-     * @var float
+     * @var ?float
      */
     protected $startTime = null;
 

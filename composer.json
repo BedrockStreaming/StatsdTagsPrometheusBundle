@@ -32,5 +32,10 @@
         "exclude-from-classmap": [
             "/Tests/"
         ]
+    },
+    "autoload-dev": {
+        "files": [
+            "Tests/Symfony/KernelForTest.php"
+        ]
     }
 }
