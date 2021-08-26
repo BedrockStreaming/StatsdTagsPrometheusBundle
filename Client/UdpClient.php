@@ -5,7 +5,7 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Client;
 class UdpClient implements ClientInterface
 {
     /** @var int max safe size in bytes of one message to send (max official size is 65507) */
-    const MAX_MESSAGE_SIZE = 64000;
+    public const MAX_MESSAGE_SIZE = 64000;
 
     /** @var ServerInterface */
     protected $server;

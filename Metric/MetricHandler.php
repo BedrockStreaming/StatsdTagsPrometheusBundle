@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MetricHandler
 {
-    const METRIC_FORMAT = '%name:%value|%type%tags';
+    public const METRIC_FORMAT = '%name:%value|%type%tags';
 
     /** @var ClientInterface */
     protected $client;

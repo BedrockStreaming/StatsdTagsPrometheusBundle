@@ -10,18 +10,18 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Metric implements MetricInterface
 {
-    const STATSD_TYPE_COUNTER = 'c';
-    const STATSD_TYPE_GAUGE = 'g';
-    const STATSD_TYPE_TIMER = 'ms';
+    public const STATSD_TYPE_COUNTER = 'c';
+    public const STATSD_TYPE_GAUGE = 'g';
+    public const STATSD_TYPE_TIMER = 'ms';
 
-    const METRIC_TYPE_COUNTER = 'counter';
-    const METRIC_TYPE_GAUGE = 'gauge';
-    const METRIC_TYPE_INCREMENT = 'increment';
-    const METRIC_TYPE_TIMER = 'timer';
+    public const METRIC_TYPE_COUNTER = 'counter';
+    public const METRIC_TYPE_GAUGE = 'gauge';
+    public const METRIC_TYPE_INCREMENT = 'increment';
+    public const METRIC_TYPE_TIMER = 'timer';
 
-    const TAG_SERVICE_RESOLUTION = '@=';
-    const TAG_PROPERTY_ACCESSOR = '->';
-    const TAG_PARAMETER_KEY = '%=';
+    public const TAG_SERVICE_RESOLUTION = '@=';
+    public const TAG_PROPERTY_ACCESSOR = '->';
+    public const TAG_PARAMETER_KEY = '%=';
 
     /** @var PropertyAccessor */
     protected $propertyAccessor;
