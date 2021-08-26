@@ -38,7 +38,7 @@ matrix:
       env: SYMFONY_VERSION="5.2.*"
 
   allow_failures:
-    - env: SYMFONY_VERSION="5.2.*"
+    - env: SYMFONY_VERSION="5.3.*"
 
 cache:
   directories:
