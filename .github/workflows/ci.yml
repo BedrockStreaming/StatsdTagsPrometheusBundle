@@ -3,32 +3,32 @@ name: Continuous Integration
 on: [push, pull_request]
 
 jobs:
-#    cs:
-#        name: Code Style
-#        runs-on: ubuntu-latest
-#        steps:
-#            - name: Checkout
-#              uses: actions/checkout@v2
-#            - name: Setup PHP
-#              uses: shivammathur/setup-php@v2
-#              with:
-#                  php-version: 7.4
-#                  coverage: xdebug
-#            - name: Get Composer Cache Directory
-#              id: composer-cache
-#              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-#            - name: Cache dependencies
-#              uses: actions/cache@v2
-#              with:
-#                  path: ${{ steps.composer-cache.outputs.dir }}
-#                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-#                  restore-keys: ${{ runner.os }}-composer-
-#            - name: Install Dependencies
-#              run: composer install --no-progress
-#            - name: Run php-cs-fixture
-#              env:
-#                  PHP_CS_FIXER_FUTURE_MODE: 1
-#              run: bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --no-interaction --diff
+    cs:
+        name: Code Style
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 7.4
+                  coverage: xdebug
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+            - name: Cache dependencies
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+            - name: Install Dependencies
+              run: composer install --no-progress
+            - name: Run php-cs-fixture
+              env:
+                  PHP_CS_FIXER_FUTURE_MODE: 1
+              run: bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --no-interaction --diff
 
     phpunit:
         name: Unit Tests
