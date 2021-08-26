@@ -1,3 +1,4 @@
+.ci/local-php-security-checker
 vendor/
 bin/
 composer.lock

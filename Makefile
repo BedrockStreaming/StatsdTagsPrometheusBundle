@@ -62,7 +62,7 @@ ${SOURCE_DIR}/composer.install.log: ${COMPOSER_BIN}
 .PHONY: sf-security-checker
 sf-security-checker:
 	$(call printSection,COMPOSER-SECURITY-CHECKER)
-	php ${BIN_DIR}/security-checker security:check --ansi composer.lock
+	${SOURCE_DIR}/.ci/security-checker.sh
 
 # TEST
 .PHONY: test
