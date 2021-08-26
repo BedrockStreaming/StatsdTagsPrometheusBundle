@@ -23,14 +23,18 @@ matrix:
       env:
         - SYMFONY_VERSION="4.4.*"
 
-    # most recent versions:
     - php: 7.4
       env:
         - SYMFONY_VERSION="5.1.*"
         - CHECK_CODE_STYLE="yes"
 
+    # most recent versions:
+    - php: 8.0
+      env:
+        - SYMFONY_VERSION="5.1.*"
+
     # bleeding edge (unreleased dev versions where failures are allowed):
-    - php: nightly # PHP 8
+    - php: nightly # PHP 8.1
       env: SYMFONY_VERSION="5.2.*"
 
   allow_failures:
