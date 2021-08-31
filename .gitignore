@@ -1,8 +1,9 @@
+.ci/local-php-security-checker
 vendor/
 bin/
 composer.lock
 composer.install.log
-.php_cs.cache
+.php-cs-fixer.cache
 
 .phpunit*
 phpunit.xml

@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 {
-    const CONFIG_ROOT_KEY = 'm6web_statsd_prometheus';
+    public const CONFIG_ROOT_KEY = 'm6web_statsd_prometheus';
 
     /** @var ContainerBuilder */
     private $container;
