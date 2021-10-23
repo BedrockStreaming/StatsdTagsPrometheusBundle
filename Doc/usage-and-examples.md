@@ -119,7 +119,7 @@ We have worked on compatibility with existing applications to prevent changes in
 
 See [Configuration \> 7. Compatibility and legacy behaviour](configuration.md#7-compatibility-and-legacy-behaviour)
 
-> For further help, have a look at the [Examples](examples.md) section.
+> For further help, have a look at the [Examples](usage-and-examples.md#examples) section.
 
 
 ## Best practices
