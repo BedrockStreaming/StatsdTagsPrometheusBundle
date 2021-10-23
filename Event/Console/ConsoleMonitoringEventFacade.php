@@ -14,17 +14,21 @@ class ConsoleMonitoringEventFacade
     private $memoryPeakInBytes;
     /** @var ?string */
     private $commandName;
+    /** @var ?ConsoleEvent */
+    private $originalEvent;
 
     public function __construct(
         ?float $startTime,
         ?float $executionTime,
         int $memoryPeakInBytes,
-        ?string $commandName
+        ?string $commandName,
+        ?ConsoleEvent $originalEvent = null
     ) {
         $this->startTime = $startTime;
         $this->executionTime = $executionTime;
         $this->memoryPeakInBytes = $memoryPeakInBytes;
         $this->commandName = $commandName;
+        $this->originalEvent = $originalEvent;
     }
 
     public static function fromEvent(ConsoleEvent $event, ?float $startTime): ConsoleMonitoringEventFacade
@@ -33,7 +37,8 @@ class ConsoleMonitoringEventFacade
             $startTime,
             $startTime !== null ? microtime(true) - $startTime : null,
             self::getPeakMemoryInBytes(),
-            self::getUnderscoredEventCommandName($event)
+            self::getUnderscoredEventCommandName($event),
+            $event
         );
     }
 
@@ -45,6 +50,7 @@ class ConsoleMonitoringEventFacade
             'executionTimeHumanReadable' => ($this->getExecutionTime() * 1000),
             'peakMemory' => $this->getMemoryPeakInBytes(),
             'underscoredCommandName' => $this->getCommandName(),
+            'originalEvent' => $this->getOriginalEvent(),
         ];
     }
 
@@ -80,5 +86,10 @@ class ConsoleMonitoringEventFacade
     public function getCommandName(): ?string
     {
         return $this->commandName;
+    }
+
+    public function getOriginalEvent(): ?ConsoleEvent
+    {
+        return $this->originalEvent;
     }
 }
