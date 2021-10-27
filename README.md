@@ -1,4 +1,4 @@
-# StatsdPrometheusBundle [![Build Status](https://travis-ci.com/M6Web/StatsdTagsPrometheusBundle.svg?branch=master)](https://travis-ci.com/M6Web/StatsdTagsPrometheusBundle)
+# StatsdPrometheusBundle [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FBedrockStreaming%2FStatsdTagsPrometheusBundle%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/BedrockStreaming/StatsdTagsPrometheusBundle/goto?ref=master)
 
 Statsd Bundle for Prometheus.  
 
