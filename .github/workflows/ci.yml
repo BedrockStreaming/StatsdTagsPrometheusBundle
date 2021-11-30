@@ -54,6 +54,12 @@ jobs:
                     # most recent versions
                     - php: 8.0
                       symfony_version: 5.3.*
+                    - php: 8.0
+                      symfony_version: 5.4.*
+                      symfony_deprecation_helper: "weak"
+                    - php: 8.0
+                      symfony_version: 6.0.*
+            fail-fast: false
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -82,7 +88,8 @@ jobs:
               run: composer update --prefer-dist --no-interaction --optimize-autoloader --prefer-stable --no-progress $COMPOSER_FLAGS
               env:
                 COMPOSER_FLAGS: ${{ matrix.composer_flags }}
-                SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.symfony_deprecation_helper }}
-                SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT: ${{ matrix.symfony_phpunit_remove_return_typehint }}
             - name: Run PHPUnit
               run: bin/simple-phpunit
+              env:
+                  SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.symfony_deprecation_helper }}
+                  SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT: ${{ matrix.symfony_phpunit_remove_return_typehint }}
