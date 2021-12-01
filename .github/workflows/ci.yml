@@ -43,7 +43,6 @@ jobs:
                       symfony_version: "3.4.*"
                       composer_flags: "--prefer-lowest"
                       cs_fixer_config: "1.3.*"
-                      symfony_deprecation_helper: "weak_vendors"
                       symfony_phpunit_remove_return_typehint: 1
                     - php: 7.3
                       symfony_version: "4.4.*"
@@ -56,7 +55,6 @@ jobs:
                       symfony_version: 5.3.*
                     - php: 8.0
                       symfony_version: 5.4.*
-                      symfony_deprecation_helper: "weak"
                     - php: 8.0
                       symfony_version: 6.0.*
             fail-fast: false
@@ -79,7 +77,7 @@ jobs:
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
                   restore-keys: ${{ runner.os }}-composer-
             - name: Install Symfony ${{ matrix.symfony_version }}
-              run: composer require "symfony/symfony:${{ matrix.symfony_version }}" --no-update
+              run: composer require "symfony/framework-bundle:${{ matrix.symfony_version }}" --no-update
               if: matrix.symfony_version != ''
             - name: Downgrade php-cs-fixer
               run: composer require "m6web/php-cs-fixer-config:${{ matrix.cs_fixer_config }}" --no-update
@@ -91,5 +89,5 @@ jobs:
             - name: Run PHPUnit
               run: bin/simple-phpunit
               env:
-                  SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.symfony_deprecation_helper }}
+                  SYMFONY_DEPRECATIONS_HELPER: weak
                   SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT: ${{ matrix.symfony_phpunit_remove_return_typehint }}
