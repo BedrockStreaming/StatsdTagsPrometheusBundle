@@ -40,7 +40,6 @@ jobs:
                 include:
                     # oldest supported versions
                     - php: 7.2
-                      symfony_version: "3.4.*"
                       composer_flags: "--prefer-lowest"
                       cs_fixer_config: "1.3.*"
                       symfony_phpunit_remove_return_typehint: 1
