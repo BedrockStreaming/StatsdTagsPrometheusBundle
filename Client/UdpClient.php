@@ -55,7 +55,7 @@ class UdpClient implements ClientInterface
     protected function getFormattedLine(string $line): string
     {
         if ($this->debugEnabled) {
-            //With debug mode on, we add a carriage return to provide more readable data
+            // With debug mode on, we add a carriage return to provide more readable data
             return $line."\n";
         }
 

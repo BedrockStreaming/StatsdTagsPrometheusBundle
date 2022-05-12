@@ -4,7 +4,7 @@ includes:
 
 parameters:
     bootstrapFiles:
-       - vendor/bin/.phpunit/phpunit-8.3-0/vendor/autoload.php
+       - vendor/bin/.phpunit/phpunit/vendor/autoload.php
     checkGenericClassInNonGenericObjectType: false
     checkMissingIterableValueType: false
     level: 'max'
@@ -16,3 +16,8 @@ parameters:
         - 'Listener'
         - 'Metric'
         - 'Tests'
+    ignoreErrors:
+        # Symfony 4 compatibility code is seen as an error on symfony 6
+        - message: '#Call to an undefined method Symfony\\Component\\HttpKernel\\Event\\[A-Za-z]+Event::isMasterRequest\(\)\.#'
+          path: Listener/*
+          count: 2
