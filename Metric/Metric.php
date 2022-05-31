@@ -100,7 +100,7 @@ class Metric implements MetricInterface
             return '1';
         }
         if (empty($this->paramValue)) {
-            //The param value is required for every type, except for increment which is handled above.
+            // The param value is required for every type, except for increment which is handled above.
             throw new MetricException(\sprintf('The configuration of the event metric "%s" must define the "param_value" option.', \get_class($this->event)));
         }
         if ($this->event instanceof MonitoringEventInterface) {

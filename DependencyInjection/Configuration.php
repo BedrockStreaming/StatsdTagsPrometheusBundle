@@ -10,7 +10,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY);
         $rootNode = $this->getRootNode($treeBuilder, M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY);

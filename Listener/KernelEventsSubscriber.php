@@ -54,8 +54,9 @@ class KernelEventsSubscriber implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
+        $isMainRequest = method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest();
         if (
-            !$event->isMasterRequest()
+            !$isMainRequest
             || \in_array($event->getRequest()->attributes->get('_route'), $this->routesForWhichKernelExceptionEventWontBeDispatched, true)
         ) {
             return;

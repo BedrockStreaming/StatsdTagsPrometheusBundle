@@ -40,8 +40,8 @@ class EventListener
         }
 
         foreach ($eventConfig['metrics'] as $metricConfig) {
-            //In a few cases, we need to handle events without metrics.
-            //Those events are mainly "flush events", used to send immediately the queued metrics.
+            // In a few cases, we need to handle events without metrics.
+            // Those events are mainly "flush events", used to send immediately the queued metrics.
             $this->metricHandler->addMetricToQueue(
                 (new Metric($event, $metricConfig))
             );
@@ -54,10 +54,11 @@ class EventListener
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        //We only need the master request in order to keep all the original request headers
-        //This will be used to resolve advanced configuration tags.
+        // We only need the master request in order to keep all the original request headers
+        // This will be used to resolve advanced configuration tags.
         // such as '@=request.get('queryParam')'
-        if ($event->isMasterRequest()) {
+        $isMainRequest = method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest();
+        if ($isMainRequest) {
             $this->metricHandler->setRequest($event->getRequest());
         }
     }
