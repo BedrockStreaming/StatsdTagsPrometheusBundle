@@ -43,7 +43,7 @@ class EventListener
             // In a few cases, we need to handle events without metrics.
             // Those events are mainly "flush events", used to send immediately the queued metrics.
             $this->metricHandler->addMetricToQueue(
-                (new Metric($event, $metricConfig))
+                new Metric($event, $metricConfig)
             );
         }
         // We ask for the metric handler to try to send the message

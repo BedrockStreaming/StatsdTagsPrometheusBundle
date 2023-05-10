@@ -138,7 +138,7 @@ class Metric implements MetricInterface
         // Add global parameters (configured in client or group)
         foreach (array_merge($this->configurationTags, $this->tags) as $tagName => $tagValue) {
             $resolvedTag = $this->resolveTagValue(
-            // By default (~), we look for the parameter with the same name as the tag.
+                // By default (~), we look for the parameter with the same name as the tag.
                 !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY.$tagName,
                 $resolvers
             );

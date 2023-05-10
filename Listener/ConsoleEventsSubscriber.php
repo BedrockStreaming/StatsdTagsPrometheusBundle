@@ -60,9 +60,9 @@ class ConsoleEventsSubscriber implements EventSubscriberInterface
             );
         }
         $this->eventDispatcher->dispatch(
-              ConsoleTerminateMonitoringEvent::fromFacade(
-                  ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
-              )
+            ConsoleTerminateMonitoringEvent::fromFacade(
+                ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
+            )
         );
     }
 
@@ -70,8 +70,8 @@ class ConsoleEventsSubscriber implements EventSubscriberInterface
     {
         $this->eventDispatcher->dispatch(
             ConsoleExceptionMonitoringEvent::fromFacade(
-                  ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
-              )
+                ConsoleMonitoringEventFacade::fromEvent($event, $this->startTime)
+            )
         );
     }
 }
